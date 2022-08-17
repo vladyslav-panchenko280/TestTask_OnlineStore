@@ -1,0 +1,24 @@
+@mixin FlexAlign($display, $alignItems: none, $justifyContent: none) {
+     display: $display;
+     align-items: $alignItems;
+     justify-content: $justifyContent;
+}
+
+@mixin buildFont($fontSize, $fontWeight, $fontColor) {
+     font-size: $fontSize;
+     font-weight: $fontWeight;
+     color: $fontColor;
+}
+
+@mixin buildSize($width, $height) {
+     width: $width;
+     height: $height;
+}
+
+@mixin buildPositionAbsolute($top: 0, $bottom: 0, $left: 0, $right: 0) {
+     position: absolute;
+     top: $top;
+     bottom: $bottom;
+     left: $left;
+     right: $right;
+}

@@ -1,3 +1,41 @@
-header {
-     
+.header {
+     @include buildSize(100%, $headerHeight);
+     @include flexAlign(flex, center, center);
+     margin: 0 auto;
+
+     & > div {
+          @include buildSize($contentWidth, 100%);
+          @include flexAlign(flex, center, space-between);
+          margin: 0 auto;
+     }
+
+     &__categoriesName {
+          @include flexAlign(flex);
+          gap: 20px;
+          height: 100%;
+          & > li {
+               @include flexAlign(flex, center, center);
+               text-transform: uppercase;
+               height: 100%;
+               & > a {
+                    @include flexAlign(flex, center, center);
+                    height: 100%;
+                    color: $blackColor;
+                    text-decoration: none;
+               }
+          }
+     }
+
+     &__logo {
+          height: 100%;
+          @include flexAlign(flex, center)
+     }
+
+     &__interfaceUtils {
+          @include flexAlign(flex, center, center);
+          height: 100%;
+          gap: 20px;
+     }
 }
+
+

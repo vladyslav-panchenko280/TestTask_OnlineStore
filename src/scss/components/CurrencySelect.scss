@@ -1,0 +1,41 @@
+.currencySelect {
+     position: relative;
+     @include buildSize(50px, 100%);
+     @include flexAlign(flex, center, center);
+
+     &>button {
+          @include flexAlign(flex, center, center);
+          @include buildSize(inherit, inherit);
+          position: relative;
+          font-size: 18px;
+          font-weight: 500;
+          background: none;
+          cursor: pointer;
+
+          &::after {
+               content: url('../../components/Header/arrow.svg');
+               position: absolute;
+               top: 27px;
+               left: 40px;
+          }
+     }
+
+     &>ul {
+          position: absolute;
+          bottom: -180px;
+          left: -20px;
+          width: 110px;
+          background: #ffffff;
+          filter: drop-shadow(0px 4px 35px rgba(168, 172, 176, 0.19));
+
+          &>li {
+               @include buildSize(100%, 40px);
+               @include flexAlign(flex, center, center);
+               cursor: pointer;
+
+               &:hover {
+                    background: $grayColor;
+               }
+          }
+     }
+}

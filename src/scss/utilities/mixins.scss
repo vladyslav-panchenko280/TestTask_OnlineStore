@@ -1,4 +1,4 @@
-@mixin FlexAlign($display, $alignItems: none, $justifyContent: none) {
+@mixin flexAlign($display, $alignItems: none, $justifyContent: none) {
      display: $display;
      align-items: $alignItems;
      justify-content: $justifyContent;

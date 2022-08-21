@@ -12,6 +12,11 @@ body {
      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
        monospace;
    }
+
+   .main {
+    height: 100%;
+    width: 100%;
+   }
    
    *, *::after, *::before {
      box-sizing: border-box;

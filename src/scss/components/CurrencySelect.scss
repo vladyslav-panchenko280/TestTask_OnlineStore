@@ -2,6 +2,7 @@
      position: relative;
      @include buildSize(50px, 100%);
      @include flexAlign(flex, center, center);
+     z-index: 100;
 
      &>button {
           @include flexAlign(flex, center, center);
@@ -11,12 +12,25 @@
           font-weight: 500;
           background: none;
           cursor: pointer;
+     }
 
-          &::after {
-               content: url('../../components/Header/arrow.svg');
-               position: absolute;
-               top: 27px;
-               left: 40px;
+     &__btn {
+          &--active {
+               &::after {
+                    content: url('../../components/Header/arrow.svg');
+                    position: absolute;
+                    top: 34px;
+                    left: 40px;
+                    transform: rotate(180deg);
+               }
+          }
+          &--disable {
+               &::after {
+                    content: url('../../components/Header/arrow.svg');
+                    position: absolute;
+                    top: 27px;
+                    left: 40px;
+               }
           }
      }
 

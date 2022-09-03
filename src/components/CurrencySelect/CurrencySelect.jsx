@@ -2,6 +2,7 @@ import React from "react";
 import { GET_CURRENCY_DATA } from "../../requests/GET_CURRENCY_DATA";
 import { Query } from "@apollo/client/react/components";
 import UserContext from "../../UserContext";
+import { findObjectValues } from "../../functions/findObjectValues";
 
 class CurrencySelect extends React.Component {
      constructor(props) {
@@ -17,21 +18,23 @@ class CurrencySelect extends React.Component {
      }
 
      componentDidMount() {
-          document.addEventListener("mousedown", this.handleClickOutside);
+          
      }
 
      handleClickOutside = (event) => {
           if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && this.state.isOpened) {
-               this.changeOpened()
+               this.changeOpened();
+               document.removeEventListener("mousedown", this.handleClickOutside);
           }
      }
 
      changeActiveCurrency = (currency) => {
-          this.setState({ activeCurrency: currency })
+          this.setState({ activeCurrency: currency });
      }
 
      changeOpened = () => {
-          this.setState({ isOpened: !this.state.isOpened })
+          this.setState({ isOpened: !this.state.isOpened });
+          document.addEventListener("mousedown", this.handleClickOutside);
      }
 
      render() {
@@ -46,6 +49,9 @@ class CurrencySelect extends React.Component {
                               const disableBtn = "currencySelect__btn--disable"
                               const activeBtn = "currencySelect__btn--active";
                               const objData = Object.entries(data);
+                             
+                              const currencies = findObjectValues(data, "currencies");
+                             
                               return (
                                    <>
                                         <button className={this.state.isOpened ? activeBtn : disableBtn} onClick={this.changeOpened}>
@@ -53,14 +59,16 @@ class CurrencySelect extends React.Component {
                                                   : objData.map(([key, value]) => value[0].symbol)}
                                         </button>
                                         {this.state.isOpened ? <ul>
-                                             {objData.map(([key, value]) => {
-                                                  return value.map(el => <li onClick={() => {
-                                                       this.changeActiveCurrency(el.symbol);
-                                                       this.context.setCurrency(el.label)
-                                                       this.changeOpened();
-                                                  }} key={el.label}>{el.symbol} {el.label}</li>)
+                                             {currencies.map(el => <li onClick={() => {
+                                                  const symbol = findObjectValues(el, 'symbol');
+                                                  const label = findObjectValues(el, 'label');
 
-                                             })}
+                                                       this.changeActiveCurrency(symbol);
+                                                       this.context.setCurrency(label)
+                                                       this.changeOpened();
+                                                  }} key={findObjectValues(el, 'label')}>{findObjectValues(el, 'symbol')} {findObjectValues(el, 'label')}</li>)
+
+                                             }
                                         </ul> : false}
                                    </>
                               );

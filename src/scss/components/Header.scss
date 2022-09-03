@@ -20,15 +20,23 @@
                & > a {
                     @include flexAlign(flex, center, center);
                     height: 100%;
-                    color: $blackColor;
                     text-decoration: none;
                }
           }
      }
 
+     &__linksColor {
+          color: $blackColor
+     }
+
      &__logo {
           height: 100%;
           @include flexAlign(flex, center)
+     }
+
+     &__activeLink {
+          color: $primaryColor;
+          border-bottom: 2px solid $primaryColor;
      }
 
      &__interfaceUtils {

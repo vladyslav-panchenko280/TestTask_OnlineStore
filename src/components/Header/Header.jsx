@@ -6,11 +6,7 @@ import CurrencySelect from "../CurrencySelect/CurrencySelect";
 import logo from './logo.svg';
 import shoppingBag from './shoppingBag.svg'
 import UserContext from "../../UserContext";
-
-let activeLink = {
-     color: "#5ECE7B",
-     borderBottom: "1px solid #5ECE7B"
-}
+import { findObjectValues } from "../../functions/findObjectValues";
 
 class Header extends React.Component {
      static contextType = UserContext;
@@ -27,19 +23,20 @@ class Header extends React.Component {
                                         if (loading) return null;
                                         if (error) return console.log(error);
 
-                                        const objData = Object.entries(data);
-                                        return objData.map(([key, value]) => {
-                                             return value.map(el => {
-                                                  const { name } = el;
-                                                  return (
-                                                       <li key={name}>
-                                                            <NavLink onClick={() => {
-                                                                 setCategory(name)
-                                                            }} to={name} className={({ isActive }) => isActive ? activeLink : undefined} href=".">{name}</NavLink>
-                                                       </li>
-                                                  )
-                                             });
-                                        })
+                                        const categories = findObjectValues(data, 'categories');
+
+                                        return categories.map(el => {
+                                             const name = findObjectValues(el, 'name')
+                                             return (
+                                                  <li key={name}>
+                                                       <NavLink onClick={() => {
+                                                            setCategory(name)
+                                                       }} to={`/${name}`} className={({ isActive }) => isActive ? 'header__activeLink' : 'header__blackColor'}>
+                                                            {name}
+                                                       </NavLink>
+                                                  </li>
+                                             )
+                                        });
                                    }}
                               </Query>
                          </ul>

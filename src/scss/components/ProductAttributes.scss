@@ -1,0 +1,41 @@
+.textAttr {
+     @include flexAlign(flex, flex-start, center);
+     flex-direction: column;
+     gap: 10px;
+
+     &>p {
+          @include buildFont(18px, 700, $blackColor);
+     }
+
+     &>ul {
+          @include flexAlign(flex, flex-start, flex-start);
+          gap: 10px;
+
+          &>li {
+               @include buildSize(63px, 45px);
+               @include flexAlign(flex, center, center);
+               border: 1px solid $blackColor;
+
+          }
+     }
+}
+
+.swatchAttr {
+     @include flexAlign(flex, flex-start, center);
+     flex-direction: column;
+     gap: 10px;
+
+     &>p {
+          @include buildFont(18px, 700, $blackColor);
+     }
+
+     &>ul {
+          @include flexAlign(flex, flex-start, flex-start);
+          gap: 10px;
+
+          &>li {
+               @include buildSize(32px, 32px);
+               @include flexAlign(flex, center, center);
+          }
+     }
+}

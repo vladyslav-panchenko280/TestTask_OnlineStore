@@ -7,6 +7,7 @@
      &>button {
           @include flexAlign(flex, center, center);
           @include buildSize(inherit, inherit);
+          @include buildFont(18px, 500, $blackColor);
           position: relative;
           font-size: 18px;
           font-weight: 500;
@@ -46,6 +47,7 @@
                @include buildSize(100%, 40px);
                @include flexAlign(flex, center, center);
                cursor: pointer;
+               @include buildFont(18px, 500, $blackColor);
 
                &:hover {
                     background: $grayColor;

@@ -2,7 +2,7 @@
      @include buildSize(inherit, inherit);
      @include flexAlign(flex, center, center);
      margin: 0 auto;
-     margin: 80px 0;
+     padding: 60px 0;
 
      &>div {
           @include buildSize($contentWidth, inherit);
@@ -56,6 +56,7 @@
           @include buildSize(292px, 60px);
           @include buildFont(16px, 600, $whiteColor);
           background: $primaryColor;
+          cursor: pointer;
      }
 
      &__description {

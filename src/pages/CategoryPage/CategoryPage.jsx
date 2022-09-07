@@ -10,7 +10,7 @@ class CategoryPage extends React.Component {
      static contextType = UserContext;
 
      render() {
-          const { currentCategory, currentCurrency, setProductId } = this.context
+          const { currentCategory, currentCurrency, setProductId, addProductToCart } = this.context;
           return (
                <section className="categoryPage">
                     <div>
@@ -34,6 +34,9 @@ class CategoryPage extends React.Component {
                                                        const gallery = findObjectValues(prod, 'gallery');
                                                        const name = findObjectValues(prod, 'name');
                                                        const prices = findObjectValues(prod, 'prices');
+                                                       const brand = findObjectValues(prod, 'brand');
+                                                       const attributes = findObjectValues(prod, 'attributes');
+
                                                        return (
                                                             <li key={id}>
                                                                  <Link to={`/${currentCategory}/${id}`}
@@ -44,7 +47,8 @@ class CategoryPage extends React.Component {
                                                                                 <img src={gallery[0]} alt="Prod pic" />
                                                                                 <button className="categoryPage__purchaseBtn"
                                                                                      onClick={(event) => {
-                                                                                          event.preventDefault()
+                                                                                          event.preventDefault();
+                                                                                          inStock ? addProductToCart({ id: id, name: name, gallery: gallery, brand: brand, inStock: inStock, attributes: attributes, prices: prices }) : event.preventDefault()
                                                                                      }}>
                                                                                      <img src={shoppingBag} alt="Shopping bag" />
                                                                                 </button>

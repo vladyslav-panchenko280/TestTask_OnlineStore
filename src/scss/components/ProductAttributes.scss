@@ -3,20 +3,46 @@
      flex-direction: column;
      gap: 10px;
 
-     &>p {
-          @include buildFont(18px, 700, $blackColor);
+     &__title {
+          &--big {
+               @include buildFont(18px, 700, $blackColor);
+          }
+          &--small {
+               @include buildFont(14px, 400, $blackColor);
+          }
      }
+
 
      &>ul {
           @include flexAlign(flex, flex-start, flex-start);
           gap: 10px;
-
-          &>li {
-               @include buildSize(63px, 45px);
+          & > li {
                @include flexAlign(flex, center, center);
                border: 1px solid $blackColor;
-
+               cursor: pointer;
           }
+     }
+
+     &__item {
+          &--big {
+               @include buildSize(63px, 45px);
+          }
+          &--small {
+               min-width: 24px;
+               height: 24px;
+               & > span {
+                    font-size: 14px;
+                    padding: 0 5px;
+               }
+          }
+     }
+
+     &--activeLi {
+          background: $blackColor;
+     }
+
+     &--activeSpan {
+          color: $whiteColor
      }
 }
 
@@ -25,8 +51,22 @@
      flex-direction: column;
      gap: 10px;
 
-     &>p {
-          @include buildFont(18px, 700, $blackColor);
+     &__title {
+          &--big {
+               @include buildFont(18px, 700, $blackColor);
+          }
+          &--small {
+               @include buildFont(14px, 400, $blackColor);
+          }
+     }
+
+     &__item {
+          &--big {
+               @include buildSize(32px, 32px);
+          }
+          &--small {
+               @include buildSize(16px, 16px);
+          }
      }
 
      &>ul {
@@ -34,8 +74,13 @@
           gap: 10px;
 
           &>li {
-               @include buildSize(32px, 32px);
                @include flexAlign(flex, center, center);
+               cursor: pointer;
           }
+     }
+
+     &--active {
+          outline-style: solid;
+          outline-color: $primaryColor;
      }
 }

@@ -3,23 +3,29 @@ import { Query } from "@apollo/client/react/components";
 import UserContext from "../../UserContext";
 import { gql } from "@apollo/client";
 import { findObjectValues } from "../../functions/findObjectValues";
-import TextAttr from "../../components/ProductAttributes/TextAttr";
-import SwatchAttr from "../../components/ProductAttributes/SwatchAttr";
+import { TextAttr } from "../../components/ProductAttributes/TextAttr";
+import { SwatchAttr } from "../../components/ProductAttributes/SwatchAttr";
 
 class ProductPage extends React.Component {
      static contextType = UserContext;
 
      state = {
-          currentPicture: ""
+          currentPicture: "",
+          attributes: []
+     }
+
+     getAttributes = (value) => {
+          const removeFromBag = this.state.attributes.filter(el => el.id !== value.id);
+          this.setState({ attributes: [...removeFromBag, value] });
      }
 
      renderAttributes = (type, id, name, items) => {
           switch (type) {
                case "text": {
-                    return <TextAttr key={id} id={id} name={name} items={items} />
+                    return <TextAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
                }
                case "swatch": {
-                    return <SwatchAttr key={id} id={id} name={name} items={items} />
+                    return <SwatchAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
                }
                default: {
                     return false
@@ -28,38 +34,35 @@ class ProductPage extends React.Component {
      }
 
      GET_PRODUCT_DATA = gql`
-      query {
-     product(id: "${this.context.productId}") {
-          id,
-          name,
-          inStock,
-          gallery,
-          description,
-          category,
-          attributes {
-            id,
-            name,
-            type,
-            items {
-              displayValue,
-              id,
-              value
-            }
-          },
-          prices {
-            currency {
-              label,
-              symbol
-            },
-            amount
-          },
-          brand
-          
-        }
-  }
-`;
-
-
+          query {
+               product(id: "${this.context.productId}") {
+                    id,
+                    name,
+                    inStock,
+                    gallery,
+                    description,
+                    category,
+                    attributes {
+                         id,
+                         name,
+                         type,
+                         items {
+                              displayValue,
+                              id,
+                              value
+                         }
+                    },
+                    prices {
+                         currency {
+                              label,
+                              symbol
+                         },
+                         amount
+                    },
+                    brand
+               }
+          }
+     `;
 
      changeCurrentPicture = (value) => {
           this.setState({ currentPicture: value })
@@ -73,6 +76,7 @@ class ProductPage extends React.Component {
                               if (loading) return null;
                               if (error) return console.log(error);
 
+                              const id = findObjectValues(data, 'id');
                               const gallery = findObjectValues(data, 'gallery');
                               const name = findObjectValues(data, 'name');
                               const brand = findObjectValues(data, 'brand');
@@ -122,9 +126,11 @@ class ProductPage extends React.Component {
                                                        })}
                                                   </span>
                                              </div>
-                                             <button className="productPage__btn">ADD TO CART</button>
+                                             <button className="productPage__btn" onClick={event => {
+                                                  inStock ? this.context.addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: this.state.attributes }) : event.preventDefault();
+                                             }}>ADD TO CART</button>
                                              <div dangerouslySetInnerHTML={{
-                                                  __html:description
+                                                  __html: description
                                              }} className="productPage__description"></div>
                                         </div>
                                    </div>

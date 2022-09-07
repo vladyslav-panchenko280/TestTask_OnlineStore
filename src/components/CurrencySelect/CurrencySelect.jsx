@@ -17,10 +17,6 @@ class CurrencySelect extends React.Component {
           activeCurrency: ''
      }
 
-     componentDidMount() {
-          
-     }
-
      handleClickOutside = (event) => {
           if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && this.state.isOpened) {
                this.changeOpened();
@@ -30,6 +26,9 @@ class CurrencySelect extends React.Component {
 
      changeActiveCurrency = (currency) => {
           this.setState({ activeCurrency: currency });
+          if (this.context.totalPrice !== 0) {
+               return this.context.calculateTotalPrice()
+          }
      }
 
      changeOpened = () => {
@@ -49,9 +48,9 @@ class CurrencySelect extends React.Component {
                               const disableBtn = "currencySelect__btn--disable"
                               const activeBtn = "currencySelect__btn--active";
                               const objData = Object.entries(data);
-                             
+
                               const currencies = findObjectValues(data, "currencies");
-                             
+
                               return (
                                    <>
                                         <button className={this.state.isOpened ? activeBtn : disableBtn} onClick={this.changeOpened}>
@@ -63,10 +62,11 @@ class CurrencySelect extends React.Component {
                                                   const symbol = findObjectValues(el, 'symbol');
                                                   const label = findObjectValues(el, 'label');
 
-                                                       this.changeActiveCurrency(symbol);
-                                                       this.context.setCurrency(label)
-                                                       this.changeOpened();
-                                                  }} key={findObjectValues(el, 'label')}>{findObjectValues(el, 'symbol')} {findObjectValues(el, 'label')}</li>)
+                                                  this.context.setCurrency(label)
+                                                  this.changeActiveCurrency(symbol);
+                                                  this.changeOpened();
+                                                  
+                                             }} key={findObjectValues(el, 'label')}>{findObjectValues(el, 'symbol')} {findObjectValues(el, 'label')}</li>)
 
                                              }
                                         </ul> : false}

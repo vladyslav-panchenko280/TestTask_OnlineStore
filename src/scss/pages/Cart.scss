@@ -1,0 +1,63 @@
+.cart {
+     @include buildSize(inherit, inherit);
+     @include flexAlign(flex, center, center);
+     margin: 0 auto;
+
+     &>div {
+          @include buildSize($contentWidth, inherit);
+          @include flexAlign(flex, flex-start, center);
+          flex-direction: column;
+          margin: 0 auto;
+
+          &>h2 {
+               display: flex;
+               align-self: flex-start;
+               margin: 60px 0;
+               @include buildFont(42px, 400, $blackColor);
+               text-transform: capitalize;
+          }
+     }
+
+     &__footerKeys {
+          @include buildFont(24px, 400, $blackColor);
+          &>p {
+               line-height: 1.2
+          }
+     }
+
+     &__footerValues {
+          @include buildFont(24px, 500, $blackColor);
+          &>p {
+               line-height: 1.2
+          }
+     }
+
+     &__orderBtn {
+          @include buildSize(280px, 45px);
+          background: $primaryColor;
+          @include buildFont(14px, 600, $whiteColor);
+          margin-top: 15px;
+          cursor: pointer;
+     }
+
+     &__footer {
+          @include flexAlign(flex, flex-start, flex-start);
+          gap: 10px;
+          margin-top: 15px;
+     }
+
+     
+
+     &__products {
+          @include buildSize(100%, 100%);
+          @include flexAlign(flex, flex-start, flex-start);
+          flex-direction: column;
+
+          &>li {
+               @include buildSize(inherit, inherit);
+               @include flexAlign(flex, center, space-between);
+               border-top: 1px solid #E5E5E5;
+               border-bottom: 1px solid #E5E5E5;
+          }
+     }
+}

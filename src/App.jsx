@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./components/Header/Header";
 import Router from "./router/router";
+import Main from "./containers/Main";
 import { UserProvider } from "./UserContext";
 
 class App extends React.Component {
@@ -10,9 +11,9 @@ class App extends React.Component {
       <>
         <UserProvider>
           <Header />
-          <main className="main">
+          <Main>
             <Router />
-          </main>
+          </Main>
         </UserProvider>
       </>
     )

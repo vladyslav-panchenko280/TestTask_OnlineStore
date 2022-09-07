@@ -1,0 +1,100 @@
+.categoryPage {
+     @include buildSize(inherit, inherit);
+     @include flexAlign(flex, center, center);
+     margin: 0 auto;
+
+     &>div {
+          @include buildSize($contentWidth, inherit);
+          @include flexAlign(flex, center, center);
+          flex-direction: column;
+          margin: 0 auto;
+
+          &>h2 {
+               display: flex;
+               align-self: flex-start;
+               margin: 80px 0;
+               @include buildFont(42px, 400, $blackColor);
+               text-transform: capitalize;
+          }
+     }
+
+     &__products {
+          @include buildSize($contentWidth, inherit);
+          @include flexAlign(grid, center, space-between);
+          grid-template-columns: repeat(3, 1fr);
+          margin: 0 auto;
+          gap: 30px;
+
+          &>li {
+               transition: 1s solid;
+
+               &:hover {
+                    box-shadow: 0px 4px 35px rgba(168, 172, 176, 0.19);
+               }
+
+               &:hover .categoryPage__purchaseBtn {
+                    position: absolute;
+                    display: inline;
+                    bottom: -20px;
+                    right: 20px;
+                    border-radius: 100%;
+                    background: $primaryColor;
+                    @include buildSize(52px, 52px);
+                    transition: 1s solid;
+                    cursor: pointer;
+               }
+
+               &>* {
+                    text-decoration: none;
+               }
+          }
+     }
+
+     &__productWrapper {
+          width: 100%;
+          @include flexAlign(flex, flex-start, center);
+          flex-direction: column;
+          padding: 15px;
+          gap: 10px;
+     }
+
+     &__imgWrapper {
+          @include buildSize(100%, 300px);
+          margin-bottom: 10px;
+          position: relative;
+
+          &>div {
+               position: absolute;
+               @include buildSize(100%, 100%);
+               @include flexAlign(flex, center, center);
+               @include buildFont(24, 400, #8D8F9A);
+               background: $grayColor;
+               opacity: 0.5;
+          }
+
+          &>img {
+               @include buildSize(100%, 100%);
+               object-fit: cover;
+          }
+     }
+
+     &__purchaseBtn {
+          position: absolute;
+          display: none;
+          bottom: -20px;
+          right: 20px;
+          border-radius: 100%;
+          background: $primaryColor;
+          @include buildSize(52px, 52px);
+          transition: 1s solid;
+          cursor: pointer;
+     }
+
+     &__productName {
+          @include buildFont(18px, 300, $blackColor)
+     }
+
+     &__productPrice {
+          @include buildFont(18px, 500, $blackColor)
+     }
+}

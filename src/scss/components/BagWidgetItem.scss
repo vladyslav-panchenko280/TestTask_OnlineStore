@@ -1,0 +1,66 @@
+.bagWidgetItem {
+     @include buildSize(inherit, 190px);
+     @include flexAlign(flex, center, space-between);
+
+     &__info {
+          gap: 15px;
+          @include buildSize(100%, 100%);
+          @include flexAlign(flex, flex-start, flex-start);
+          flex-direction: column;
+     }
+
+     &__prodName {
+          @include buildFont(16px, 400, $blackColor);
+          width: 90%;
+
+          &>span {
+               @include buildFont(16px, 300, $blackColor);
+          }
+     }
+
+     &__price {
+          & > span {
+               @include buildFont(16px, 500, $blackColor);
+          }
+     }
+
+     &__gallery {
+          @include buildSize(120px, 190px);
+          position: relative;
+
+          &>img {
+               object-fit: cover;
+               @include buildSize(100%, 100%);
+          }
+     }
+
+     &__galleryAndCount {
+          @include flexAlign(flex, center, space-between);
+          min-width: 153px
+     }
+
+     &__attributes {
+          @include flexAlign(flex, flex-start, center);
+          flex-direction: column;
+          gap: 13px;
+     }
+
+     &__countWrapper {
+          @include flexAlign(flex, center, space-between);
+          flex-direction: column;
+          height: 190px;
+          & > p {
+               @include buildFont(16px, 500, $blackColor);
+          }
+
+          &> span {
+               cursor: pointer;
+               font-size: 24px;
+               font-weight: 400;
+               @include buildSize(24px, 24px);
+               border: 1px solid $blackColor;
+               text-align: center;
+               line-height: 0.8;
+          }
+     }
+}

@@ -1,0 +1,75 @@
+.bagWidget {
+     @include buildSize(325px, 600px);
+     @include flexAlign(flex, center, center);
+     position: absolute;
+     background-color: #fff;
+     z-index: 900;
+     right: 10%;
+
+     &__container {
+          padding: 15px;
+          @include buildSize(100%, 100%)
+     }
+
+     &__totalPrice {
+          @include flexAlign(flex, center, space-between);
+          margin-top: 20px;
+
+          &>span {
+               @include buildFont(16px, 700, $blackColor);
+          }
+     }
+
+     &__btnContainer {
+          @include buildSize(100%, 43px);
+          @include flexAlign(flex, center, space-between);
+          margin: 30px 0;
+
+          &>button {
+               @include buildSize(140px, 43px);
+          }
+     }
+
+     &__primaryBtn {
+          @include buildFont(14px, 600, $whiteColor);
+          background: $primaryColor;
+     }
+
+     &__secondaryBtn {
+          border: 1px solid $blackColor;
+          @include buildFont(14px, 600, $blackColor);
+          @include buildSize(140px, 43px);
+          text-decoration: none;
+          background: none;
+          @include flexAlign(flex, center, center)
+     }
+
+     &__title {
+          @include buildFont(16px, 700, $blackColor);
+
+          &>span {
+               font-weight: 500;
+          }
+     }
+
+     &__products {
+          @include buildSize(100%, 100%);
+          @include flexAlign(flex, flex-start, flex-start);
+          flex-direction: column;
+          height: 430px;
+          overflow-y: overlay;
+
+          &>li {
+               @include buildSize(inherit, 190px);
+               @include flexAlign(flex, center, space-between);
+               margin: 15px 0;
+          }
+     }
+}
+
+.overlay {
+     z-index: 800;
+     @include buildSize(100vw, 100%);
+     position: absolute;
+     background: rgba(57, 55, 72, 0.22);
+}

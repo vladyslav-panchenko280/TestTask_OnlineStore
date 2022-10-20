@@ -8,7 +8,7 @@ import shoppingBag from './shoppingBag.svg'
 import UserContext from "../../UserContext";
 import { findObjectValues } from "../../functions/findObjectValues";
 
-class Header extends React.Component {
+class Header extends React.PureComponent {
      static contextType = UserContext;
 
      render() {
@@ -41,10 +41,8 @@ class Header extends React.Component {
                                         }}
                                    </Query>
                               </ul>
-                              <Link to={currentCategory}>
-                                   <div className="header__logo">
-                                        <img src={logo} alt="Logo" />
-                                   </div>
+                              <Link to={currentCategory} className="header__logo">
+                                   <img src={logo} alt="Logo" />
                               </Link>
                               <div className="header__interfaceUtils">
                                    <CurrencySelect />

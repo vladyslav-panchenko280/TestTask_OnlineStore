@@ -39,18 +39,21 @@
           @include flexAlign(flex, center, space-between);
           flex-direction: column;
           height: 290px;
-          & > p {
+
+          &>p {
                @include buildFont(24px, 500, $blackColor);
           }
 
-          &> span {
+          &>div {
                cursor: pointer;
-               font-size: 30px;
-               font-weight: 400;
                @include buildSize(45px, 45px);
+               @include flexAlign(flex, center, center);
                border: 1px solid $blackColor;
-               text-align: center;
-               line-height: 1.2;
+
+               &>span {
+                    font-size: 30px;
+                    font-weight: 400;
+               }
           }
      }
 
@@ -61,7 +64,7 @@
           right: 20px;
           width: 60px;
 
-          & > img {
+          &>img {
                cursor: pointer;
           }
      }

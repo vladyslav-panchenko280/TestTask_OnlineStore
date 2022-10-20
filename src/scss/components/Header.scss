@@ -34,6 +34,7 @@
                text-transform: uppercase;
                height: 100%;
                color: $blackColor;
+               cursor: pointer;
 
                &>a {
                     @include flexAlign(flex, center, center);
@@ -50,7 +51,8 @@
 
      &__logo {
           height: 100%;
-          @include flexAlign(flex, center)
+          @include flexAlign(flex, center);
+          cursor: pointer;
      }
 
      &__activeLink {

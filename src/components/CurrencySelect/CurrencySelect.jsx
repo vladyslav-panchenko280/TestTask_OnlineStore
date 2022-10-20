@@ -4,7 +4,7 @@ import { Query } from "@apollo/client/react/components";
 import UserContext from "../../UserContext";
 import { findObjectValues } from "../../functions/findObjectValues";
 
-class CurrencySelect extends React.Component {
+class CurrencySelect extends React.PureComponent {
      constructor(props) {
           super(props);
           this.wrapperRef = React.createRef();

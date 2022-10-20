@@ -24,6 +24,7 @@
           &>ul>li {
                @include buildSize(80px, 80px);
                margin: 10px 0;
+               cursor: pointer;
 
                &>img {
                     @include buildSize(100%, 100%);

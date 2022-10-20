@@ -4,11 +4,32 @@ import { findObjectValues } from "../../functions/findObjectValues";
 import { Link } from "react-router-dom";
 import BagWidgetItem from "../BagWidgetItem/BagWidgetItem";
 
-class BagWidget extends React.Component {
+class BagWidget extends React.PureComponent {
      static contextType = UserContext;
 
+     constructor(props) {
+          super(props);
+          this.wrapperRef = React.createRef();
+     }
+
+     handleClickOutside = (event) => {
+          if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && this.context.openedBagWidget && event.target !== document.querySelector(".header__shoppingBag > img")) {
+               
+               this.changeOpened();
+          }
+     }
+     
+
+     changeOpened = () => {
+          this.context.toggleBagWidget();
+     }
+
+     componentWillUnmount() {
+          document.removeEventListener("mousedown", this.handleClickOutside);
+     }
      componentDidMount() {
-          this.context.getUniqProds(this.context.productCart)
+          this.context.getUniqProds(this.context.productCart);
+          document.addEventListener("mousedown", this.handleClickOutside);
      }
 
      render() {
@@ -16,7 +37,7 @@ class BagWidget extends React.Component {
 
           return (
                <div className="overlay">
-                    <div className="bagWidget">
+                    <div className="bagWidget" ref={this.wrapperRef}>
                          <div className="bagWidget__container">
                               <p className="bagWidget__title">My bag <span>{productCart.length} items</span></p>
                               <ul className='bagWidget__products'>
@@ -40,7 +61,7 @@ class BagWidget extends React.Component {
                               </ul>
                               <p className="bagWidget__totalPrice"><span>Total:</span><span>{totalPrice}</span></p>
                               <div className="bagWidget__btnContainer">
-                                   <Link to={`/cart`} onClick={this.context.toggleBagWidget} className="bagWidget__secondaryBtn">VIEW BAG</Link>
+                                   <Link to={`/cart`} onClick={this.changeOpened} className="bagWidget__secondaryBtn">VIEW BAG</Link>
                                    <button className="bagWidget__primaryBtn" onClick={() => {
                                         console.group();
                                         console.log('Products:');

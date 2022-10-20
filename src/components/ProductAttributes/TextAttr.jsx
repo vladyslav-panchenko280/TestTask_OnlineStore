@@ -1,7 +1,7 @@
 import React from 'react';
 import { findObjectValues } from '../../functions/findObjectValues';
 
-class TextAttr extends React.Component {
+class TextAttr extends React.PureComponent {
      constructor() {
           super();
           this.type = 'text';

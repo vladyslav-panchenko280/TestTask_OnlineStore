@@ -3,8 +3,12 @@ import CartProduct from '../../components/CartProduct/CartProduct';
 import { findObjectValues } from '../../functions/findObjectValues';
 import UserContext from "../../UserContext";
 
-class Cart extends React.Component {
+class Cart extends React.PureComponent {
      static contextType = UserContext;
+
+     state = {
+          tax: 21
+     }
 
      componentDidMount() {
           this.context.getUniqProds(this.context.productCart);
@@ -12,6 +16,7 @@ class Cart extends React.Component {
 
      render() {
           const { uniqProductsArray } = this.context;
+          const { tax } = this.state;
 
           return (
                <section className='cart'>
@@ -38,12 +43,12 @@ class Cart extends React.Component {
                          </ul>
                          <div className='cart__footer'>
                               <div className='cart__footerKeys'>
-                                   <p>Tax 21%:</p>
+                                   <p>Tax { tax }%:</p>
                                    <p>Quantity:</p>
                                    <p>Total:</p>
                               </div>
                               <div className='cart__footerValues'>
-                                   <p>$0</p>
+                                   <p></p>
                                    <p>{this.context.productCart.length}</p>
                                    <p>{this.context.totalPrice}</p>
                               </div>

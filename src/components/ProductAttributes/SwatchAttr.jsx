@@ -1,7 +1,7 @@
 import React from 'react';
 import { findObjectValues } from '../../functions/findObjectValues';
 
-class SwatchAttr extends React.Component {
+class SwatchAttr extends React.PureComponent {
 
      constructor() {
           super();
@@ -18,7 +18,7 @@ class SwatchAttr extends React.Component {
                     const elId = findObjectValues(el, 'id')
                     const valueId = findObjectValues(el, 'valueId');
                     if (elId === this.props.id) {
-                         return this.chooseValue(valueId)
+                         this.chooseValue(valueId)
                     }
                })
           }

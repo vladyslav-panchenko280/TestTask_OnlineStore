@@ -1,12 +1,13 @@
 import React from "react";
 import { Query } from "@apollo/client/react/components";
 import UserContext from "../../UserContext";
-import { gql } from "@apollo/client";
 import { findObjectValues } from "../../functions/findObjectValues";
 import { TextAttr } from "../../components/ProductAttributes/TextAttr";
 import { SwatchAttr } from "../../components/ProductAttributes/SwatchAttr";
+import { sanitize } from "../../functions/sanitize"
+import {GET_PRODUCT_DATA} from "../../requests/GET_PRODUCT_DATA"
 
-class ProductPage extends React.Component {
+class ProductPage extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
@@ -33,37 +34,6 @@ class ProductPage extends React.Component {
           }
      }
 
-     GET_PRODUCT_DATA = gql`
-          query {
-               product(id: "${this.context.productId}") {
-                    id,
-                    name,
-                    inStock,
-                    gallery,
-                    description,
-                    category,
-                    attributes {
-                         id,
-                         name,
-                         type,
-                         items {
-                              displayValue,
-                              id,
-                              value
-                         }
-                    },
-                    prices {
-                         currency {
-                              label,
-                              symbol
-                         },
-                         amount
-                    },
-                    brand
-               }
-          }
-     `;
-
      changeCurrentPicture = (value) => {
           this.setState({ currentPicture: value })
      }
@@ -71,7 +41,7 @@ class ProductPage extends React.Component {
      render() {
           return (
                <section className="productPage">
-                    <Query query={this.GET_PRODUCT_DATA}>
+                    <Query query={GET_PRODUCT_DATA(this.context.productId)}>
                          {({ loading, error, data }) => {
                               if (loading) return null;
                               if (error) return console.log(error);
@@ -84,6 +54,7 @@ class ProductPage extends React.Component {
                               const prices = findObjectValues(data, 'prices');
                               const inStock = findObjectValues(data, 'inStock');
                               const description = findObjectValues(data, 'description');
+
 
                               return (
                                    <div>
@@ -126,12 +97,12 @@ class ProductPage extends React.Component {
                                                        })}
                                                   </span>
                                              </div>
-                                             <button className="productPage__btn" onClick={event => {
+                                             <button className="productPage__btn" disabled={inStock ? false : true} onClick={event => {
                                                   inStock ? this.context.addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: this.state.attributes }) : event.preventDefault();
                                              }}>ADD TO CART</button>
-                                             <div dangerouslySetInnerHTML={{
-                                                  __html: description
-                                             }} className="productPage__description"></div>
+                                             <div className="productPage__description">
+                                                  {sanitize(description)}
+                                             </div>
                                         </div>
                                    </div>
                               )

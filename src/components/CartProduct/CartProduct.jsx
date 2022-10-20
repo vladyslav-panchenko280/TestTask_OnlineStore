@@ -1,12 +1,12 @@
 import React from 'react';
 import { findObjectValues } from '../../functions/findObjectValues';
 import UserContext from "../../UserContext";
-import {TextAttr} from '../ProductAttributes/TextAttr';
-import {SwatchAttr} from '../ProductAttributes/SwatchAttr';
+import { TextAttr } from '../ProductAttributes/TextAttr';
+import { SwatchAttr } from '../ProductAttributes/SwatchAttr';
 import leftScroll from './leftScroll.svg';
 import rightScroll from './rightScroll.svg';
 
-class CartProduct extends React.Component {
+class CartProduct extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
@@ -87,7 +87,6 @@ class CartProduct extends React.Component {
                                         const label = findObjectValues(el, 'label');
                                         const symbol = findObjectValues(el, 'symbol');
 
-
                                         return label === this.context.currentCurrency ? `${symbol}${amount}` : false
                                    })}
                               </span>
@@ -105,22 +104,28 @@ class CartProduct extends React.Component {
                     </div>
                     <div className='cartProduct__galleryAndCount'>
                          <div className='cartProduct__countWrapper'>
-                              <span onClick={() => {
+                              <div>
+                                   <span onClick={() => {
                                         this.context.calculateTotalPrice()
                                         this.increaseCount()
                                    }} >+</span>
+                              </div>
                               <p>{this.state.count}</p>
-                              <span onClick={() => {
+                              <div>
+                                   <span onClick={() => {
                                         this.context.calculateTotalPrice()
                                         this.decreaseCount()
                                    }}>-</span>
+                              </div>
                          </div>
                          <div className='cartProduct__gallery'>
                               <img src={gallery[this.state.galleryPhotoIndex]} alt={name} />
-                              <div className='cartProduct__scrollGallery'>
-                                   <img src={leftScroll} onClick={() => { this.scrollToLeft(gallery) }} alt="left scroll" />
-                                   <img src={rightScroll} onClick={() => { this.scrollToRight(gallery) }} alt="right scroll" />
-                              </div>
+                              {
+                                   (gallery.length > 1) ? <div className='cartProduct__scrollGallery'>
+                                        <img src={leftScroll} onClick={() => { this.scrollToLeft(gallery) }} alt="left scroll" />
+                                        <img src={rightScroll} onClick={() => { this.scrollToRight(gallery) }} alt="right scroll" />
+                                   </div> : false
+                              }
                          </div>
                     </div>
                </div>

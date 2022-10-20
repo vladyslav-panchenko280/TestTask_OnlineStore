@@ -6,7 +6,7 @@ import { findObjectValues } from "../../functions/findObjectValues";
 import { Link } from 'react-router-dom';
 import shoppingBag from './shoppingBag.svg';
 
-class CategoryPage extends React.Component {
+class CategoryPage extends React.PureComponent {
      static contextType = UserContext;
 
      render() {

@@ -2,7 +2,7 @@ import React from 'react';
 import BagWidget from '../components/BagWidget/BagWidget';
 import UserContext from '../UserContext';
 
-class Main extends React.Component {
+class Main extends React.PureComponent {
      static contextType = UserContext;
 
      render() {

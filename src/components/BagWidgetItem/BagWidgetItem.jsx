@@ -4,7 +4,7 @@ import UserContext from "../../UserContext";
 import { TextAttr } from '../ProductAttributes/TextAttr';
 import { SwatchAttr } from '../ProductAttributes/SwatchAttr';
 
-class BagWidgetItem extends React.Component {
+class BagWidgetItem extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
@@ -86,15 +86,19 @@ class BagWidgetItem extends React.Component {
                     </div>
                     <div className='bagWidgetItem__galleryAndCount'>
                          <div className='bagWidgetItem__countWrapper'>
-                              <span onClick={() => {
-                                   this.context.calculateTotalPrice()
-                                   this.increaseCount()
-                              }} >+</span>
+                              <div>
+                                   <span onClick={() => {
+                                        this.context.calculateTotalPrice()
+                                        this.increaseCount()
+                                   }} >+</span>
+                              </div>
                               <p>{this.state.count}</p>
-                              <span onClick={() => {
-                                   this.context.calculateTotalPrice()
-                                   this.decreaseCount()
-                              }}>-</span>
+                              <div>
+                                   <span onClick={() => {
+                                        this.context.calculateTotalPrice()
+                                        this.decreaseCount()
+                                   }}>-</span>
+                              </div>
                          </div>
                          <div className='bagWidgetItem__gallery'>
                               <img src={gallery[0]} alt={name} />

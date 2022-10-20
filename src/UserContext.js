@@ -51,7 +51,7 @@ class UserProvider extends React.Component {
                     
                })
           });
-          return this.setState({totalPrice: `${symbol}${total.toFixed(2)}`})
+          return this.setState({totalPrice: Number.parseFloat(total.toFixed(2))})
      }
 
      getUniqProds = (productCart) => {

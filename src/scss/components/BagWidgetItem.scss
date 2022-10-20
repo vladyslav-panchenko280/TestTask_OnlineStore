@@ -53,14 +53,16 @@
                @include buildFont(16px, 500, $blackColor);
           }
 
-          &> span {
+          & > div {
                cursor: pointer;
-               font-size: 24px;
-               font-weight: 400;
                @include buildSize(24px, 24px);
+               @include flexAlign(flex, center, center);
                border: 1px solid $blackColor;
-               text-align: center;
-               line-height: 0.8;
+
+               & > span {
+                    font-size: 24px;
+                    font-weight: 400;
+               }
           }
      }
 }

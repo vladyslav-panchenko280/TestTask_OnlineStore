@@ -5,7 +5,7 @@ import CategoryPage from '../pages/CategoryPage/CategoryPage';
 import Cart from '../pages/Cart/Cart';
 import UserContext from '../UserContext';
 
-class Router extends React.Component {
+class Router extends React.PureComponent {
      static contextType = UserContext;
 
      render() {

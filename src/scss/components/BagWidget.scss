@@ -33,6 +33,7 @@
      &__primaryBtn {
           @include buildFont(14px, 600, $whiteColor);
           background: $primaryColor;
+          cursor: pointer;
      }
 
      &__secondaryBtn {
@@ -41,7 +42,8 @@
           @include buildSize(140px, 43px);
           text-decoration: none;
           background: none;
-          @include flexAlign(flex, center, center)
+          @include flexAlign(flex, center, center);
+          cursor: pointer;
      }
 
      &__title {

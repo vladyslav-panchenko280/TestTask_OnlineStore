@@ -6,17 +6,12 @@ import UserContext from "../../UserContext";
 class Cart extends React.PureComponent {
      static contextType = UserContext;
 
-     state = {
-          tax: 21
-     }
-
      componentDidMount() {
           this.context.getUniqProds(this.context.productCart);
      }
 
      render() {
-          const { uniqProductsArray } = this.context;
-          const { tax } = this.state;
+          const { uniqProductsArray, tax } = this.context;
 
           return (
                <section className='cart'>
@@ -48,7 +43,7 @@ class Cart extends React.PureComponent {
                                    <p>Total:</p>
                               </div>
                               <div className='cart__footerValues'>
-                                   <p></p>
+                                   <p>{(this.context.totalPrice * (tax / 100)).toFixed(2)}</p>
                                    <p>{this.context.productCart.length}</p>
                                    <p>{this.context.totalPrice}</p>
                               </div>

@@ -8,12 +8,12 @@ class BagWidgetItem extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
-          attributes: [],
-          count: this.props.productCount,
+          attributes: this.props.selectedAttributes,
+          count: this.context.getCountOfItem(this.props.id)[0],
      }
 
      componentDidMount() {
-          return this.context.calculateTotalPrice()
+          this.context.calculateTotalPrice()
      }
 
      getAttributes = (value) => {
@@ -37,25 +37,48 @@ class BagWidgetItem extends React.PureComponent {
 
      increaseCount = () => {
 
-          if (this.state.count < 10) {
+          if (this.state.count) {
                this.setState({ count: this.state.count + 1 });
-               return this.context.addProductToCart({ id: this.props.id, name: this.props.name, gallery: this.props.gallery, brand: this.props.brand, inStock: this.props.inStock, attributes: this.props.attributes, prices: this.props.prices, count: this.props.productCount })
+               this.context.addProductToCart({ id: this.props.id, name: this.props.name, gallery: this.props.gallery, brand: this.props.brand, inStock: this.props.inStock, attributes: this.props.attributes, prices: this.props.prices, count: this.props.count })
+
+               
+               this.props.prices.map(el => {
+                    const amount = findObjectValues(el, 'amount');
+                    const label = findObjectValues(el, 'label');
+                    const symbol = findObjectValues(el, 'symbol');
+
+
+                    return label === this.context.currentCurrency ? this.context.sumOperation(amount
+                         , "+") : false
+               })
+
           }
      }
 
      decreaseCount = () => {
 
-          if (this.state.count > 1) {
+          if (this.state.count > 0) {
                this.setState({ count: this.state.count - 1 });
-               return this.context.removeProductFromCart(this.props.id)
+               this.context.productCart.length--;
+
+               this.props.prices.map(el => {
+                    const amount = findObjectValues(el, 'amount');
+                    const label = findObjectValues(el, 'label');
+                    const symbol = findObjectValues(el, 'symbol');
+
+
+                    return label === this.context.currentCurrency ? this.context.sumOperation(amount
+                         , "-") : false
+               })
+              this.context.getUniqProds()
           }
      }
 
      render() {
           const { name, brand, prices, attributes, gallery, selectedAttributes } = this.props;
 
-          return (
 
+          return (
                <div className='bagWidgetItem'>
                     <div className='bagWidgetItem__info'>
                          <p className="bagWidgetItem__prodName">{name} <br />
@@ -105,6 +128,7 @@ class BagWidgetItem extends React.PureComponent {
                          </div>
                     </div>
                </div>
+
           )
      }
 }

@@ -5,7 +5,7 @@ import { findObjectValues } from "../../functions/findObjectValues";
 import { TextAttr } from "../../components/ProductAttributes/TextAttr";
 import { SwatchAttr } from "../../components/ProductAttributes/SwatchAttr";
 import { sanitize } from "../../functions/sanitize"
-import {GET_PRODUCT_DATA} from "../../requests/GET_PRODUCT_DATA"
+import { GET_PRODUCT_DATA } from "../../requests/GET_PRODUCT_DATA"
 
 class ProductPage extends React.PureComponent {
      static contextType = UserContext;
@@ -20,27 +20,63 @@ class ProductPage extends React.PureComponent {
           this.setState({ attributes: [...removeFromBag, value] });
      }
 
-     renderAttributes = (type, id, name, items) => {
-          switch (type) {
-               case "text": {
-                    return <TextAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
+     renderAttributes = (attributes) => {
+          return attributes.map(el => {
+               const id = findObjectValues(el, 'id');
+               const type = findObjectValues(el, 'type');
+               const name = findObjectValues(el, 'name');
+               const items = findObjectValues(el, 'items');
+
+
+               switch (type) {
+                    case "text": {
+                         return <TextAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
+                    }
+                    case "swatch": {
+                         return <SwatchAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
+                    }
+                    default: {
+                         return false
+                    }
                }
-               case "swatch": {
-                    return <SwatchAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
-               }
-               default: {
-                    return false
-               }
-          }
+          })
+     }
+
+     renderPrice = (prices) => {
+          return prices.map(el => {
+               const amount = findObjectValues(el, 'amount');
+               const label = findObjectValues(el, 'label');
+               const symbol = findObjectValues(el, 'symbol');
+
+               return label === this.context.currentCurrency ? `${symbol}${amount}` : false
+          })
      }
 
      changeCurrentPicture = (value) => {
           this.setState({ currentPicture: value })
      }
 
+     renderGallery = gallery => {
+          return gallery.map(link => {
+               return <li key={gallery.indexOf(link)} onClick={() => {
+                    return this.changeCurrentPicture(link);
+               }}><img src={link} alt="product" /></li>
+          })
+     }
+
+     renderMainPhoto = (gallery, inStock) => {
+          if (this.state.currentPicture !== "") {
+               return (<img src={this.state.currentPicture} alt="product" />)
+          } else {
+               return (<img src={gallery[0]} alt="product" />)
+          }
+          
+
+     }
+
      render() {
           return (
-               <section className="productPage">
+               <section className="productPage" >
                     <Query query={GET_PRODUCT_DATA(this.context.productId)}>
                          {({ loading, error, data }) => {
                               if (loading) return null;
@@ -55,19 +91,14 @@ class ProductPage extends React.PureComponent {
                               const inStock = findObjectValues(data, 'inStock');
                               const description = findObjectValues(data, 'description');
 
-
                               return (
                                    <div>
                                         <div className="productPage__gallery">
                                              <ul>
-                                                  {gallery.map(link => {
-                                                       return <li key={gallery.indexOf(link)} onClick={() => {
-                                                            return this.changeCurrentPicture(link);
-                                                       }}><img src={link} alt="product" /></li>
-                                                  })}
+                                                  {this.renderGallery(gallery)}
                                              </ul>
                                              <div className="productPage__mainPhoto">
-                                                  {this.state.currentPicture !== "" ? <img src={this.state.currentPicture} alt="product" /> : <img src={gallery[0]} alt="product" />}
+                                                  {this.renderMainPhoto(gallery, inStock)}
                                                   {inStock ? false : <div>OUT OF STOCK</div>}
                                              </div>
                                         </div>
@@ -75,31 +106,16 @@ class ProductPage extends React.PureComponent {
                                              <p className="productPage__name">{name} <br />
                                                   <span>{brand}</span>
                                              </p>
-                                             <div className="productPage__attributes">
-                                                  {attributes.map(el => {
-                                                       const id = findObjectValues(el, 'id');
-                                                       const type = findObjectValues(el, 'type');
-                                                       const name = findObjectValues(el, 'name');
-                                                       const items = findObjectValues(el, 'items');
-
-                                                       return this.renderAttributes(type, id, name, items);
-                                                  })}
-                                             </div>
+                                             <div className="productPage__attributes">{this.renderAttributes(attributes)}</div>
                                              <div className="productPage__price">
                                                   <p>Price:</p>
-                                                  <span>
-                                                       {prices.map(el => {
-                                                            const amount = findObjectValues(el, 'amount');
-                                                            const label = findObjectValues(el, 'label');
-                                                            const symbol = findObjectValues(el, 'symbol');
-
-                                                            return label === this.context.currentCurrency ? `${symbol}${amount}` : false
-                                                       })}
-                                                  </span>
+                                                  <span>{this.renderPrice(prices)}</span>
                                              </div>
-                                             <button className="productPage__btn" disabled={inStock ? false : true} onClick={event => {
-                                                  inStock ? this.context.addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: this.state.attributes }) : event.preventDefault();
-                                             }}>ADD TO CART</button>
+                                             {
+                                                  inStock ?
+                                                       <button className="productPage__btn" onClick={event => { (attributes.length === this.state.attributes.length) ? this.context.addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: this.state.attributes }) : event.preventDefault() }}>ADD TO CART</button> :
+                                                       <button className="productPage__btn" disabled>ADD TO CART</button>
+                                             }
                                              <div className="productPage__description">
                                                   {sanitize(description)}
                                              </div>

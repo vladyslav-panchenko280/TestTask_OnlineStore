@@ -3,15 +3,15 @@
 
 ///////////////////////////////////////////////////////////////////////////////2. Overlay must be closable on the outside click
 
-3. The customer must be able to add the product to the cart only if the attributes are selected ----- ???
+/////////////////////////3. The customer must be able to add the product to the cart only if the attributes are selected ----- ???
 
 4. Make the attributes in mini cart and on the cart page unclickable ----- ???
 
 ///////////////////////////////////////////////////////////////////////////////////////5. Add cursor pointer to all clickable elements
 
-6. There is a bug with quantity between the cart overlay and the cart page
+///////////////////////////////////////////////////////////6. There is a bug with quantity between the cart overlay and the cart page
 
-7. when product quantity is 0, product must be removed (now 1 is the lowest possible value)
+///////////////////////////////////////////7. when product quantity is 0, product must be removed (now 1 is the lowest possible value)
 
 ////////////////////////////////////////////////////////////////////////8. if the product is out of stock, the button must be disabled 
 
@@ -21,7 +21,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////11. plus and minus aren’t centered
 
-12. Tax must be 21% from Total
+//////////////////////////////////////////////////////////////////////////////////////////////////////12. Tax must be 21% from Total
 
 ////////////////////////////////////////////////////////////////////////////////////////////13. Use PureComponent instead of Component
 

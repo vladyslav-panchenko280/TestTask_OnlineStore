@@ -62,7 +62,7 @@ class CurrencySelect extends React.PureComponent {
                                                   const symbol = findObjectValues(el, 'symbol');
                                                   const label = findObjectValues(el, 'label');
 
-                                                  this.context.setCurrency(label)
+                                                  this.context.setCurrency(label, symbol)
                                                   this.changeActiveCurrency(symbol);
                                                   this.changeOpened();
                                                   

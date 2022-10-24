@@ -1,9 +1,9 @@
 import React from "react";
 import { Query } from "@apollo/client/react/components";
 import UserContext from "../../UserContext";
+import Prices from "../../components/Prices/Prices";
+import AttributesComponent from "../../components/ProductAttributes/AttributesComponent";
 import { findObjectValues } from "../../functions/findObjectValues";
-import { TextAttr } from "../../components/ProductAttributes/TextAttr";
-import { SwatchAttr } from "../../components/ProductAttributes/SwatchAttr";
 import { sanitize } from "../../functions/sanitize"
 import { GET_PRODUCT_DATA } from "../../requests/GET_PRODUCT_DATA"
 
@@ -18,38 +18,6 @@ class ProductPage extends React.PureComponent {
      getAttributes = (value) => {
           const removeFromBag = this.state.attributes.filter(el => el.id !== value.id);
           this.setState({ attributes: [...removeFromBag, value] });
-     }
-
-     renderAttributes = (attributes) => {
-          return attributes.map(el => {
-               const id = findObjectValues(el, 'id');
-               const type = findObjectValues(el, 'type');
-               const name = findObjectValues(el, 'name');
-               const items = findObjectValues(el, 'items');
-
-
-               switch (type) {
-                    case "text": {
-                         return <TextAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
-                    }
-                    case "swatch": {
-                         return <SwatchAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} layoutSize={'big'} />
-                    }
-                    default: {
-                         return false
-                    }
-               }
-          })
-     }
-
-     renderPrice = (prices) => {
-          return prices.map(el => {
-               const amount = findObjectValues(el, 'amount');
-               const label = findObjectValues(el, 'label');
-               const symbol = findObjectValues(el, 'symbol');
-
-               return label === this.context.currentCurrency ? `${symbol}${amount}` : false
-          })
      }
 
      changeCurrentPicture = (value) => {
@@ -106,10 +74,10 @@ class ProductPage extends React.PureComponent {
                                              <p className="productPage__name">{name} <br />
                                                   <span>{brand}</span>
                                              </p>
-                                             <div className="productPage__attributes">{this.renderAttributes(attributes)}</div>
+                                             <AttributesComponent className={"productPage__attributes"} isDisabled={false} attributes={attributes} layoutSize={'big'} getAttributes={this.getAttributes}/>
                                              <div className="productPage__price">
                                                   <p>Price:</p>
-                                                  <span>{this.renderPrice(prices)}</span>
+                                                  <Prices prices={prices}></Prices>
                                              </div>
                                              {
                                                   inStock ?

@@ -29,7 +29,7 @@ class TextAttr extends React.PureComponent {
      }
 
      render() {
-          const {id, name, items, getAttributes, layoutSize } = this.props;
+          const {id, name, items, getAttributes, layoutSize, isDisabled=false } = this.props;
           return (
                <div className='textAttr' id={id}>
                     <p className={`textAttr__title--${layoutSize}`}>{name.toUpperCase()}:</p>
@@ -38,7 +38,7 @@ class TextAttr extends React.PureComponent {
                          const valueId = findObjectValues(el, 'id');
                          const displayValue = findObjectValues(el, 'displayValue');
 
-                         return <li key={valueId} className={this.state.activeValueId === valueId ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} onClick={() => {
+                         return isDisabled ? <li key={valueId} className={this.state.activeValueId === valueId ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} disabled><span className={this.state.activeValueId === valueId ? 'textAttr--activeSpan' : ""}>{value}</span></li> : <li key={valueId} className={this.state.activeValueId === valueId ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} onClick={() => {
                               getAttributes({id: id, name: name, type: this.type, items: {value: value, valueId: valueId, displayValue: displayValue}})
                               this.chooseValue(valueId);
                          }}><span className={this.state.activeValueId === valueId ? 'textAttr--activeSpan' : ""}>{value}</span></li>;

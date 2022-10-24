@@ -36,6 +36,22 @@ class CurrencySelect extends React.PureComponent {
           document.addEventListener("mousedown", this.handleClickOutside);
      }
 
+     renderCurrencies = (currencies) => {
+          return <ul>
+          {currencies.map(el => <li onClick={() => {
+               const symbol = findObjectValues(el, 'symbol');
+               const label = findObjectValues(el, 'label');
+
+               this.context.setCurrency(label, symbol)
+               this.changeActiveCurrency(symbol);
+               this.changeOpened();
+               
+          }} key={findObjectValues(el, 'label')}>{findObjectValues(el, 'symbol')} {findObjectValues(el, 'label')}</li>)
+
+          }
+     </ul>
+     }
+
      render() {
 
           return (
@@ -57,19 +73,7 @@ class CurrencySelect extends React.PureComponent {
                                              {this.state.activeCurrency !== '' ? this.state.activeCurrency
                                                   : objData.map(([key, value]) => value[0].symbol)}
                                         </button>
-                                        {this.state.isOpened ? <ul>
-                                             {currencies.map(el => <li onClick={() => {
-                                                  const symbol = findObjectValues(el, 'symbol');
-                                                  const label = findObjectValues(el, 'label');
-
-                                                  this.context.setCurrency(label, symbol)
-                                                  this.changeActiveCurrency(symbol);
-                                                  this.changeOpened();
-                                                  
-                                             }} key={findObjectValues(el, 'label')}>{findObjectValues(el, 'symbol')} {findObjectValues(el, 'label')}</li>)
-
-                                             }
-                                        </ul> : false}
+                                        {this.state.isOpened ? this.renderCurrencies(currencies) : false}
                                    </>
                               );
                          }}

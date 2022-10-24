@@ -14,31 +14,41 @@ class UserProvider extends React.Component {
           productCart: [],
           totalPrice: 0,
           openedBagWidget: false,
-          tax: 21, 
+          tax: 21,
           uniqProductsArray: []
      }
 
-    getCountOfItem = (id) => {
-     return this.state.uniqProductsArray.map(el => {
-          if (el.id === id) {
-               return el.count
-          }
-     })
-    }
+     getCountOfItem = (id) => {
+          let count = 0;
+          this.state.uniqProductsArray.map(el => {
+               if (el.id === id) {
+                    count = el.count
+               }
+          })
+          return count;
+     }
+
+     getCountOfAllItems = () => {
+          let res = 0;
+          this.state.productCart.forEach(el => res++)
+          return res
+     }
 
      getUniqProds = () => {
-          const productCount = Object.create(null)
+          const productCount = {}
           const addedProducts = new Set()
 
-          console.log(this.state.productCart)
           for (let elem of this.state.productCart) {
-               console.log("elem:")
-               console.log(elem)
-               let { id } = elem;
-               if ((productCount[id] = ~~productCount[id] + 1) === 1) {
-                    addedProducts.add(elem);
-               }
+               let { id, selectedAttributes } = elem;
+
+
+                    if ((productCount[id] = ~~productCount[id] + 1) === 1) {
+                         addedProducts.add(elem);
+                    }
           }
+
+          console.log(productCount)
+          console.log(addedProducts)
 
           const addedProductsArr = Array.from(addedProducts);
           const productCountArr = Object.entries(productCount)
@@ -46,9 +56,13 @@ class UserProvider extends React.Component {
           for (let elem of addedProductsArr) {
                const { id } = elem;
                for (let [key, value] of productCountArr) {
-                    if (id === key) elem.count = value;
+                    if (id === key) {
+                         elem.count = value;
+                    }
                }
           }
+
+          console.log(addedProducts)
 
           return this.setState({ uniqProductsArray: addedProductsArr });
      }
@@ -59,17 +73,6 @@ class UserProvider extends React.Component {
 
      addProductToCart = (product) => {
           this.setState({ productCart: [...this.state.productCart, product] })
-     }
-
-     removeProductFromCart = (id) => {
-
-          let removedItem;
-          this.state.productCart.map(el => {
-               if (el.id === id) removedItem = el;
-          })
-          const removeFromBag = this.state.productCart.filter(el => el.selectedAttributes);
-          this.setState({ productCart: removeFromBag })
-
      }
 
      renderAttributes = (type, id, name, items, layoutSize, selectedAttributes = null) => {
@@ -124,7 +127,7 @@ class UserProvider extends React.Component {
      render() {
           const { children } = this.props;
           const { currentCategory, currentCurrency, productId, productCart, totalPrice, openedBagWidget, tax, currentCurrencySymbol, uniqProductsArray } = this.state;
-          const { setCategory, setCurrency, setProductId, addProductToCart, removeProductFromCart, calculateTotalPrice, toggleBagWidget, renderAttributes, sumOperation, getUniqProds, getCountOfItem } = this;
+          const { setCategory, setCurrency, setProductId, addProductToCart, calculateTotalPrice, toggleBagWidget, renderAttributes, sumOperation, getUniqProds, getCountOfItem, getCountOfAllItems } = this;
 
           return (
                <UserContext.Provider value={{
@@ -137,6 +140,7 @@ class UserProvider extends React.Component {
                     openedBagWidget,
                     tax,
                     uniqProductsArray,
+                    getCountOfAllItems,
                     getUniqProds,
                     renderAttributes,
                     toggleBagWidget,
@@ -144,7 +148,6 @@ class UserProvider extends React.Component {
                     calculateTotalPrice,
                     getCountOfItem,
                     addProductToCart,
-                    removeProductFromCart,
                     setProductId,
                     setCurrency,
                     setCategory

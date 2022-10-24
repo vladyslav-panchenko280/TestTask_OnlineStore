@@ -32,9 +32,8 @@ class BagWidget extends React.PureComponent {
                const selectedAttributes = findObjectValues(el, 'selectedAttributes');
                const count = findObjectValues(el, "count")
 
-
                return (
-                    
+
                     <li key={this.context.uniqProductsArray.indexOf(el)}>
                          <BagWidgetItem id={id} name={name} brand={brand} prices={prices} attributes={attributes} gallery={gallery} selectedAttributes={selectedAttributes} inStock={inStock} count={count} />
                     </li>
@@ -55,32 +54,33 @@ class BagWidget extends React.PureComponent {
      }
      componentDidMount() {
           this.context.getUniqProds()
-          
           document.addEventListener("mousedown", this.handleClickOutside);
      }
 
+     checkout = () => {
+          console.group();
+          console.log('Products:');
+          console.log(this.context.productCart);
+          console.log('Total:');
+          console.log(this.context.totalPrice);
+          console.groupEnd();
+     }
+
      render() {
-          const { productCart, totalPrice, currentCurrencySymbol } = this.context;
+          const { productCart, totalPrice, currentCurrencySymbol, getCountOfAllItems } = this.context;
 
           return (
                <div className="overlay">
                     <div className="bagWidget" ref={this.wrapperRef}>
                          <div className="bagWidget__container">
-                              <p className="bagWidget__title">My bag <span>{productCart.length} items</span></p>
+                              <p className="bagWidget__title">My bag <span>{getCountOfAllItems()} items</span></p>
                               <ul className='bagWidget__products'>
                                    {this.renderItems()}
                               </ul>
                               <p className="bagWidget__totalPrice"><span>Total:</span><span>{`${currentCurrencySymbol}${totalPrice}`}</span></p>
                               <div className="bagWidget__btnContainer">
                                    <Link to={`/cart`} onClick={this.changeOpened} className="bagWidget__secondaryBtn">VIEW BAG</Link>
-                                   <button className="bagWidget__primaryBtn" onClick={() => {
-                                        console.group();
-                                        console.log('Products:');
-                                        console.log(this.context.productCart);
-                                        console.log('Total:');
-                                        console.log(this.context.totalPrice);
-                                        console.groupEnd();
-                                   }}>CHECKOUT</button>
+                                   <button className="bagWidget__primaryBtn" onClick={this.checkout}>CHECKOUT</button>
                               </div>
                          </div>
                     </div>

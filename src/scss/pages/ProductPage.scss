@@ -58,6 +58,10 @@
           @include buildFont(16px, 600, $whiteColor);
           background: $primaryColor;
           cursor: pointer;
+
+          &:disabled {
+               cursor: auto;
+          }
      }
 
      &__description {

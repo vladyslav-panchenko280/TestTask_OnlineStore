@@ -44,6 +44,9 @@
      &--activeSpan {
           color: $whiteColor
      }
+     &--disabled {
+          cursor: auto;
+     }
 }
 
 .swatchAttr {
@@ -82,5 +85,9 @@
      &--active {
           outline-style: solid;
           outline-color: $primaryColor;
+     }
+
+     &--disabled {
+          cursor: auto;
      }
 }

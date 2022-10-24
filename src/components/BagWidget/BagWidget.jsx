@@ -67,7 +67,7 @@ class BagWidget extends React.PureComponent {
      }
 
      render() {
-          const { productCart, totalPrice, currentCurrencySymbol, getCountOfAllItems } = this.context;
+          const { totalPrice, currentCurrencySymbol, getCountOfAllItems } = this.context;
 
           return (
                <div className="overlay">

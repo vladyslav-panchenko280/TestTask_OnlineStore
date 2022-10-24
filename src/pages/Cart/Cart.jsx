@@ -43,6 +43,14 @@ class Cart extends React.PureComponent {
                console.groupEnd();
      }
 
+     renderButton = () => {
+          return (
+               this.context.productCart.length === 0 ?
+               <button className='cart__orderBtn' disabled>ORDER</button> :
+               <button className='cart__orderBtn' onClick={this.checkout}>ORDER</button>
+          )
+     }
+
      render() {
           const { tax } = this.context;
 
@@ -63,7 +71,7 @@ class Cart extends React.PureComponent {
                                    <p>{this.context.totalPrice}{this.context.currentCurrencySymbol}</p>
                               </div>
                          </div>
-                         <button className='cart__orderBtn' onClick={this.checkout}>ORDER</button>
+                         {this.renderButton()}
                     </div>
                </section>
           )

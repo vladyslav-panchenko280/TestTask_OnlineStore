@@ -20,6 +20,20 @@ class CategoryPage extends React.PureComponent {
           })
      }
 
+     renderButton = (id, name, gallery, brand, inStock, attributes, prices) => {
+          return (
+               inStock ?
+               <button className="categoryPage__purchaseBtn"
+                    onClick={() => {this.context.addProductToCart({ id: id, name: name, gallery: gallery, brand: brand, inStock: inStock, attributes: attributes, prices: prices, selectedAttributes: undefined })
+                    }}
+               >
+                    <img src={shoppingBag} alt="Shopping bag" />
+               </button> : <button className="categoryPage__purchaseBtn" disabled onClick={event => event.preventDefault()}>
+                    <img src={shoppingBag} alt="Shopping bag" />
+               </button>
+          )
+     }
+
      renderProducts = products => {
           return products.map(prod => {
                const id = findObjectValues(prod, 'id');
@@ -38,14 +52,7 @@ class CategoryPage extends React.PureComponent {
                                    <div className="categoryPage__imgWrapper">
                                         {inStock ? false : <div>OUT OF STOCK</div>}
                                         <img src={gallery[0]} alt="Prod pic" />
-                                        <button className="categoryPage__purchaseBtn"
-                                        onClick={(event) => {
-                                             event.preventDefault();
-                                             inStock ? this.context.addProductToCart({ id: id, name: name, gallery: gallery, brand: brand, inStock: inStock, attributes: attributes, prices: prices, selectedAttributes: undefined }) : event.preventDefault()
-                                        }}
-                                        >
-                                             <img src={shoppingBag} alt="Shopping bag" />
-                                        </button>
+                                        {this.renderButton(id, name, gallery, brand, inStock, attributes, prices)}
                                    </div>
                                    <p className="categoryPage__productName">{name}</p>
                                    <Prices class={"categoryPage__productPrice"} prices={prices} />

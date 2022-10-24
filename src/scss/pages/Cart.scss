@@ -38,6 +38,10 @@
           @include buildFont(14px, 600, $whiteColor);
           margin-top: 15px;
           cursor: pointer;
+
+          &:disabled {
+               cursor: auto;
+          }
      }
 
      &__footer {

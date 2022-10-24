@@ -89,6 +89,10 @@
           @include buildSize(52px, 52px);
           transition: 1s solid;
           cursor: pointer;
+
+          &:disabled {
+               cursor: auto;
+          }
      }
 
      &__productName {

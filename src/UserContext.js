@@ -35,36 +35,38 @@ class UserProvider extends React.Component {
      }
 
      getUniqProds = () => {
-          const productCount = {}
-          const addedProducts = new Set()
+          let array = [];
 
-          for (let elem of this.state.productCart) {
-               let { id, selectedAttributes } = elem;
+          const filterArray = (array, identify) => {
 
-
-                    if ((productCount[id] = ~~productCount[id] + 1) === 1) {
-                         addedProducts.add(elem);
-                    }
-          }
-
-          console.log(productCount)
-          console.log(addedProducts)
-
-          const addedProductsArr = Array.from(addedProducts);
-          const productCountArr = Object.entries(productCount)
-
-          for (let elem of addedProductsArr) {
-               const { id } = elem;
-               for (let [key, value] of productCountArr) {
-                    if (id === key) {
-                         elem.count = value;
+               for (let i of array) {
+                    let count = 0;
+                    for (let j of array) {
+                         if (i.id === j.id && findObjectValues(i.selectedAttributes, "name") === findObjectValues(j.selectedAttributes, "name") && findObjectValues(i.selectedAttributes, "value") === findObjectValues(j.selectedAttributes, "value")) {
+                              count++;
+                              i.count = count;
+                         }
                     }
                }
-          }
 
-          console.log(addedProducts)
+               const matches = {};
+               const filtered = [];
+               for (let i = 0, ii = array.length; i < ii; i++) {
+                    const identity = identify(array[i]);
+                    if (!(identity in matches)) {
+                         matches[identity] = true;
+                         filtered.push(array[i]);
+                    }
+               }
 
-          return this.setState({ uniqProductsArray: addedProductsArr });
+               return filtered;
+          };
+
+
+          array = filterArray(this.state.productCart, item => item.id && findObjectValues(item.selectedAttributes, "name") && findObjectValues(item.selectedAttributes, "value"));
+
+
+          this.setState({ uniqProductsArray: array })
      }
 
      toggleBagWidget = () => {
@@ -73,6 +75,17 @@ class UserProvider extends React.Component {
 
      addProductToCart = (product) => {
           this.setState({ productCart: [...this.state.productCart, product] })
+     }
+
+     removeProductFromCart = (id, selectedAttributes) => {
+          const arr = this.state.productCart;
+          
+          arr.map(((el, index) => {
+               if (el.id === id && findObjectValues(el.selectedAttributes, "name") === findObjectValues(selectedAttributes, "name") && findObjectValues(el.selectedAttributes, "value") === findObjectValues(selectedAttributes, "value")) {
+                    return arr.splice(arr[index], 1)
+               }
+          }))
+          this.setState({productCart: arr})
      }
 
      renderAttributes = (type, id, name, items, layoutSize, selectedAttributes = null) => {
@@ -127,7 +140,7 @@ class UserProvider extends React.Component {
      render() {
           const { children } = this.props;
           const { currentCategory, currentCurrency, productId, productCart, totalPrice, openedBagWidget, tax, currentCurrencySymbol, uniqProductsArray } = this.state;
-          const { setCategory, setCurrency, setProductId, addProductToCart, calculateTotalPrice, toggleBagWidget, renderAttributes, sumOperation, getUniqProds, getCountOfItem, getCountOfAllItems } = this;
+          const { setCategory, setCurrency, setProductId, addProductToCart, calculateTotalPrice, toggleBagWidget, renderAttributes, sumOperation, getUniqProds, getCountOfItem, getCountOfAllItems, removeProductFromCart } = this;
 
           return (
                <UserContext.Provider value={{
@@ -141,6 +154,7 @@ class UserProvider extends React.Component {
                     tax,
                     uniqProductsArray,
                     getCountOfAllItems,
+                    removeProductFromCart,
                     getUniqProds,
                     renderAttributes,
                     toggleBagWidget,

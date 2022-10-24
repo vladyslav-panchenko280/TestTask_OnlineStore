@@ -14,8 +14,8 @@ class Cart extends React.PureComponent {
           this.context.getUniqProds()
      }
 
-     renderItems = uniqProductsArray => {
-          return uniqProductsArray.map(el => {
+     renderItems = () => {
+         return (this.context.uniqProductsArray.map(el => {
                const id = findObjectValues(el, 'id');
                const name = findObjectValues(el, 'name');
                const brand = findObjectValues(el, 'brand');
@@ -27,11 +27,11 @@ class Cart extends React.PureComponent {
                const count = findObjectValues(el, 'count');
 
                return (
-                    <li key={id}>
-                         <CartProduct id={id} name={name} brand={brand} prices={prices} attributes={attributes} gallery={gallery} selectedAttributes={selectedAttributes} uniqProductsArray={uniqProductsArray} inStock={inStock} count={count} />
+                    <li key={this.context.uniqProductsArray.indexOf(el)}>
+                         <CartProduct id={id} name={name} brand={brand} prices={prices} attributes={attributes} gallery={gallery} selectedAttributes={selectedAttributes} inStock={inStock} count={count} />
                     </li>
                )
-          })
+          }))
      }
 
      checkout = () => {
@@ -44,13 +44,13 @@ class Cart extends React.PureComponent {
      }
 
      render() {
-          const { uniqProductsArray, tax } = this.context;
+          const { tax } = this.context;
 
           return (
                <section className='cart'>
                     <div>
                          <h2>Cart</h2>
-                         <ul className='cart__products'>{this.renderItems(uniqProductsArray)}</ul>
+                         <ul className='cart__products'>{this.renderItems()}</ul>
                          <div className='cart__footer'>
                               <div className='cart__footerKeys'>
                                    <p>Tax { tax }%:</p>
@@ -58,9 +58,9 @@ class Cart extends React.PureComponent {
                                    <p>Total:</p>
                               </div>
                               <div className='cart__footerValues'>
-                                   <p>{(this.context.totalPrice * (tax / 100)).toFixed(2)}</p>
+                                   <p>{(this.context.totalPrice * (tax / 100)).toFixed(2)}{this.context.currentCurrencySymbol}</p>
                                    <p>{this.context.productCart.length}</p>
-                                   <p>{this.context.totalPrice}</p>
+                                   <p>{this.context.totalPrice}{this.context.currentCurrencySymbol}</p>
                               </div>
                          </div>
                          <button className='cart__orderBtn' onClick={this.checkout}>ORDER</button>

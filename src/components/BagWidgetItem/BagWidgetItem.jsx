@@ -3,8 +3,6 @@ import { findObjectValues } from '../../functions/findObjectValues';
 import UserContext from "../../UserContext";
 import Prices from '../Prices/Prices';
 import AttributesComponent from '../ProductAttributes/AttributesComponent';
-import { TextAttr } from '../ProductAttributes/TextAttr';
-import { SwatchAttr } from '../ProductAttributes/SwatchAttr';
 
 class BagWidgetItem extends React.PureComponent {
      static contextType = UserContext;
@@ -33,13 +31,14 @@ class BagWidgetItem extends React.PureComponent {
                this.props.prices.map(el => {
                     const amount = findObjectValues(el, 'amount');
                     const label = findObjectValues(el, 'label');
-                    const symbol = findObjectValues(el, 'symbol');
-
 
                     return label === this.context.currentCurrency ? this.context.sumOperation(amount
                          , "+") : false
                })
 
+               this.context.getUniqProds()
+
+               console.log(this.context.uniqProductsArray)
           }
      }
 
@@ -47,14 +46,11 @@ class BagWidgetItem extends React.PureComponent {
 
           if (this.state.count > 0) {
                this.setState({ count: this.state.count - 1 });
-               this.context.productCart.length--;
+               this.context.removeProductFromCart(this.props.id, this.state.attributes);
 
                this.props.prices.map(el => {
                     const amount = findObjectValues(el, 'amount');
                     const label = findObjectValues(el, 'label');
-                    const symbol = findObjectValues(el, 'symbol');
-
-
 
                     return label === this.context.currentCurrency ? this.context.sumOperation(amount
                          , "-") : false

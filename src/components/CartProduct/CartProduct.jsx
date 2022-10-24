@@ -3,8 +3,6 @@ import { findObjectValues } from '../../functions/findObjectValues';
 import UserContext from "../../UserContext";
 import Prices from '../Prices/Prices';
 import AttributesComponent from '../ProductAttributes/AttributesComponent';
-import { TextAttr } from '../ProductAttributes/TextAttr';
-import { SwatchAttr } from '../ProductAttributes/SwatchAttr';
 import leftScroll from './leftScroll.svg';
 import rightScroll from './rightScroll.svg';
 
@@ -14,17 +12,12 @@ class CartProduct extends React.PureComponent {
      state = {
           attributes: [],
           galleryPhotoIndex: 0,
-          count: this.context.getCountOfItem(this.props.id)[0],
+          count: this.context.getCountOfItem(this.props.id),
      }
 
      componentDidMount() {
-          this.forceUpdate(this.setState({ count: this.context.getCountOfItem(this.props.id)[0] }))
+          this.forceUpdate(this.setState({ count: this.context.getCountOfItem(this.props.id) }))
           this.context.calculateTotalPrice()
-     }
-
-     getAttributes = (value) => {
-          const removeFromBag = this.state.attributes.filter(el => el.id !== value.id);
-          this.setState({ attributes: [...removeFromBag, value] });
      }
 
      scrollToRight = (gallery) => {
@@ -56,7 +49,7 @@ class CartProduct extends React.PureComponent {
                     return label === this.context.currentCurrency ? this.context.sumOperation(amount
                          , "+") : false
                })
-
+               this.context.getUniqProds()
           }
      }
 
@@ -64,7 +57,7 @@ class CartProduct extends React.PureComponent {
 
           if (this.state.count > 0) {
                this.setState({ count: this.state.count - 1 });
-               this.context.productCart.length--;
+               this.context.removeProductFromCart(this.props.id, this.state.attributes);
 
                this.props.prices.map(el => {
                     const amount = findObjectValues(el, 'amount');
@@ -77,9 +70,43 @@ class CartProduct extends React.PureComponent {
           }
      }
 
+     renderCount = () => {
+          return (
+               <>
+                    <div>
+                         <span onClick={() => {
+                              this.context.calculateTotalPrice()
+                              this.increaseCount()
+                         }} >+</span>
+                    </div>
+                    <p>{this.state.count}</p>
+                    <div>
+                         <span onClick={() => {
+                              this.context.calculateTotalPrice()
+                              this.decreaseCount()
+                         }}>-</span>
+                    </div>
+               </>
+          )
+     }
+
+     renderGallery = () => {
+          return (
+               <>
+                    <img src={this.props.gallery[this.state.galleryPhotoIndex]} alt={this.props.name} />
+                    {
+                         (this.props.gallery.length > 1) ? <div className='cartProduct__scrollGallery'>
+                              <img src={leftScroll} onClick={() => { this.scrollToLeft(this.props.gallery) }} alt="left scroll" />
+                              <img src={rightScroll} onClick={() => { this.scrollToRight(this.props.gallery) }} alt="right scroll" />
+                         </div> : false
+                    }
+               </>
+          )
+     }
+
 
      render() {
-          const { name, brand, prices, attributes, gallery } = this.props;
+          const { name, brand, prices, attributes } = this.props;
 
           return (
 
@@ -96,30 +123,8 @@ class CartProduct extends React.PureComponent {
 
                     </div>
                     <div className='cartProduct__galleryAndCount'>
-                         <div className='cartProduct__countWrapper'>
-                              <div>
-                                   <span onClick={() => {
-                                        this.context.calculateTotalPrice()
-                                        this.increaseCount()
-                                   }} >+</span>
-                              </div>
-                              <p>{this.state.count}</p>
-                              <div>
-                                   <span onClick={() => {
-                                        this.context.calculateTotalPrice()
-                                        this.decreaseCount()
-                                   }}>-</span>
-                              </div>
-                         </div>
-                         <div className='cartProduct__gallery'>
-                              <img src={gallery[this.state.galleryPhotoIndex]} alt={name} />
-                              {
-                                   (gallery.length > 1) ? <div className='cartProduct__scrollGallery'>
-                                        <img src={leftScroll} onClick={() => { this.scrollToLeft(gallery) }} alt="left scroll" />
-                                        <img src={rightScroll} onClick={() => { this.scrollToRight(gallery) }} alt="right scroll" />
-                                   </div> : false
-                              }
-                         </div>
+                         <div className='cartProduct__countWrapper'>{this.renderCount()}</div>
+                         <div className='cartProduct__gallery'>{this.renderGallery()}</div>
                     </div>
                </div>
           )

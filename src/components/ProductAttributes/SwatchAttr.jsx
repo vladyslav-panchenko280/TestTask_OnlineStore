@@ -29,7 +29,7 @@ class SwatchAttr extends React.PureComponent {
      }
 
      render() {
-          const { name, items, getAttributes, id, layoutSize } = this.props;
+          const { name, items, getAttributes, id, layoutSize, isDisabled=false } = this.props;
          
           return (
                <div className='swatchAttr' id={id}>
@@ -39,7 +39,7 @@ class SwatchAttr extends React.PureComponent {
                          const valueId = findObjectValues(el, 'id');
                          const displayValue = findObjectValues(el, 'displayValue');
 
-                         return <li key={valueId} className={this.state.activeValueId === valueId ? `swatchAttr--active swatchAttr__item--${layoutSize}` : `swatchAttr__item--${layoutSize}`} style={{ backgroundColor: value }} onClick={() => {
+                         return isDisabled ? <li disabled key={valueId} className={this.state.activeValueId === valueId ? `swatchAttr--active swatchAttr__item--${layoutSize}` : `swatchAttr__item--${layoutSize}`} style={{ backgroundColor: value }}></li> : <li key={valueId} className={this.state.activeValueId === valueId ? `swatchAttr--active swatchAttr__item--${layoutSize}` : `swatchAttr__item--${layoutSize}`} style={{ backgroundColor: value }} onClick={() => {
                               getAttributes({ id: id, name: name, type: this.type, items: { value: value, valueId: valueId, displayValue: displayValue } })
                               this.chooseValue(valueId);
                          }}></li>;

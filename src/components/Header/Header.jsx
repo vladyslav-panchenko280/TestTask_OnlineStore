@@ -11,8 +11,23 @@ import { findObjectValues } from "../../functions/findObjectValues";
 class Header extends React.PureComponent {
      static contextType = UserContext;
 
+     renderCategoryNames = (categories) => {
+          return categories.map(el => {
+               const name = findObjectValues(el, 'name')
+               return (
+                    <li key={name}>
+                         <NavLink onClick={() => {
+                              this.context.setCategory(name)
+                         }} to={`/${name}`} className={({ isActive }) => isActive ? 'header__activeLink' : 'header__blackColor'}>
+                              {name}
+                         </NavLink>
+                    </li>
+               )
+          });
+     }
+
      render() {
-          const { setCategory, currentCategory, productCart } = this.context;
+          const { currentCategory, productCart, getCountOfAllItems } = this.context;
 
           return (
                <>
@@ -26,18 +41,7 @@ class Header extends React.PureComponent {
 
                                              const categories = findObjectValues(data, 'categories');
 
-                                             return categories.map(el => {
-                                                  const name = findObjectValues(el, 'name')
-                                                  return (
-                                                       <li key={name}>
-                                                            <NavLink onClick={() => {
-                                                                 setCategory(name)
-                                                            }} to={`/${name}`} className={({ isActive }) => isActive ? 'header__activeLink' : 'header__blackColor'}>
-                                                                 {name}
-                                                            </NavLink>
-                                                       </li>
-                                                  )
-                                             });
+                                             return this.renderCategoryNames(categories)
                                         }}
                                    </Query>
                               </ul>
@@ -49,7 +53,7 @@ class Header extends React.PureComponent {
 
                                    <div className="header__shoppingBag" onClick={this.context.toggleBagWidget}>
                                         <img src={shoppingBag} alt="Shopping bag" />
-                                        {productCart.length >= 1 ? <span className="header__bagCount">{productCart.length}</span> : false}
+                                        {getCountOfAllItems() >= 1 ? <span className="header__bagCount">{getCountOfAllItems()}</span> : false}
                                    </div>
 
                               </div>

@@ -7,7 +7,40 @@ class Cart extends React.PureComponent {
      static contextType = UserContext;
 
      componentDidMount() {
-          this.context.getUniqProds(this.context.productCart);
+          this.context.getUniqProds();
+     }
+
+     componentWillUnmount() {
+          this.context.getUniqProds()
+     }
+
+     renderItems = uniqProductsArray => {
+          return uniqProductsArray.map(el => {
+               const id = findObjectValues(el, 'id');
+               const name = findObjectValues(el, 'name');
+               const brand = findObjectValues(el, 'brand');
+               const prices = findObjectValues(el, 'prices');
+               const attributes = findObjectValues(el, 'attributes');
+               const gallery = findObjectValues(el, 'gallery');
+               const inStock = findObjectValues(el, 'inStock');
+               const selectedAttributes = findObjectValues(el, 'selectedAttributes');
+               const count = findObjectValues(el, 'count');
+
+               return (
+                    <li key={id}>
+                         <CartProduct id={id} name={name} brand={brand} prices={prices} attributes={attributes} gallery={gallery} selectedAttributes={selectedAttributes} uniqProductsArray={uniqProductsArray} inStock={inStock} count={count} />
+                    </li>
+               )
+          })
+     }
+
+     checkout = () => {
+               console.group();
+               console.log('Products:');
+               console.log(this.context.productCart);
+               console.log('Total:');
+               console.log(this.context.totalPrice);
+               console.groupEnd();
      }
 
      render() {
@@ -17,25 +50,7 @@ class Cart extends React.PureComponent {
                <section className='cart'>
                     <div>
                          <h2>Cart</h2>
-                         <ul className='cart__products'>
-                              {uniqProductsArray.map(el => {
-                                   const id = findObjectValues(el, 'id');
-                                   const name = findObjectValues(el, 'name');
-                                   const brand = findObjectValues(el, 'brand');
-                                   const prices = findObjectValues(el, 'prices');
-                                   const attributes = findObjectValues(el, 'attributes');
-                                   const gallery = findObjectValues(el, 'gallery');
-                                   const inStock = findObjectValues(el, 'inStock');
-                                   const selectedAttributes = findObjectValues(el, 'selectedAttributes');
-                                   const productCount = findObjectValues(el, 'count');
-
-                                   return (
-                                        <li key={id}>
-                                             <CartProduct id={id} name={name} brand={brand} prices={prices} attributes={attributes} gallery={gallery} selectedAttributes={selectedAttributes} uniqProductsArray={uniqProductsArray} inStock={inStock} productCount={productCount} />
-                                        </li>
-                                   )
-                              })}
-                         </ul>
+                         <ul className='cart__products'>{this.renderItems(uniqProductsArray)}</ul>
                          <div className='cart__footer'>
                               <div className='cart__footerKeys'>
                                    <p>Tax { tax }%:</p>
@@ -48,14 +63,7 @@ class Cart extends React.PureComponent {
                                    <p>{this.context.totalPrice}</p>
                               </div>
                          </div>
-                         <button className='cart__orderBtn' onClick={() => {
-                              console.group();
-                              console.log('Products:');
-                              console.log(this.context.productCart);
-                              console.log('Total:');
-                              console.log(this.context.totalPrice);
-                              console.groupEnd();
-                         }}>ORDER</button>
+                         <button className='cart__orderBtn' onClick={this.checkout}>ORDER</button>
                     </div>
                </section>
           )

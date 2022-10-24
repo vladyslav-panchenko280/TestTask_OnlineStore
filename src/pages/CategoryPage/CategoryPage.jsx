@@ -39,10 +39,10 @@ class CategoryPage extends React.PureComponent {
                                         {inStock ? false : <div>OUT OF STOCK</div>}
                                         <img src={gallery[0]} alt="Prod pic" />
                                         <button className="categoryPage__purchaseBtn"
-                                        // onClick={(event) => {
-                                        //      event.preventDefault();
-                                        //      inStock ? addProductToCart({ id: id, name: name, gallery: gallery, brand: brand, inStock: inStock, attributes: attributes, prices: prices }) : event.preventDefault()
-                                        // }}
+                                        onClick={(event) => {
+                                             event.preventDefault();
+                                             inStock ? this.context.addProductToCart({ id: id, name: name, gallery: gallery, brand: brand, inStock: inStock, attributes: attributes, prices: prices, selectedAttributes: undefined }) : event.preventDefault()
+                                        }}
                                         >
                                              <img src={shoppingBag} alt="Shopping bag" />
                                         </button>

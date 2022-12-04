@@ -1,131 +1,169 @@
 import React from "react";
 import { TextAttr } from "./components/ProductAttributes/TextAttr";
 import { SwatchAttr } from "./components/ProductAttributes/SwatchAttr";
-import { findObjectValues } from "./functions/findObjectValues";
+import { getSpecialKey } from "./functions/getSpecialKey";
 
 const UserContext = React.createContext();
 
-class UserProvider extends React.Component {
-     state = {
-          currentCategory: "all",
-          currentCurrency: "USD",
-          currentCurrencySymbol: "$",
-          productId: "",
-          productCart: [],
-          totalPrice: 0,
-          openedBagWidget: false,
-          tax: 21,
-          uniqProductsArray: []
+class UserProvider extends React.PureComponent {
+     constructor(props) {
+          super(props);
+
+          const app = JSON.parse(window.localStorage.getItem('app')) || null;
+
+          if (app) {
+               const { currentCategory, currentCurrency, currentCurrencySymbol, productId, totalPrice, pageNames, countInCart } = app;
+               const productCart = new Map(app.productCart);
+
+               this.state = {
+                    currentCategory: currentCategory,
+                    currentCurrency: currentCurrency,
+                    currentCurrencySymbol: currentCurrencySymbol,
+                    productId: productId,
+                    productCart: productCart,
+                    totalPrice: totalPrice,
+                    pageNames: pageNames,
+                    countInCart: countInCart,
+                    openedBagWidget: false,
+                    tax: 21
+               }
+          } else {
+               this.state = {
+                    currentCategory: "",
+                    currentCurrency: "USD",
+                    currentCurrencySymbol: "$",
+                    productId: "",
+                    productCart: new Map(),
+                    totalPrice: 0,
+                    pageNames: [],
+                    countInCart: 0,
+                    openedBagWidget: false,
+                    tax: 21
+               }
+          }
      }
 
-     getCountOfItem = (id) => {
-          let count = 0;
-          this.state.uniqProductsArray.map(el => {
-               if (el.id === id) {
-                    count = el.count
-               }
-          })
-          return count;
+     componentDidUpdate() {
+          const { currentCategory, currentCurrency, currentCurrencySymbol, productCart, productId, totalPrice, pageNames, countInCart } = this.state;
+          const { calculateTotalPrice } = this;
+
+          if (productCart.size !== 0) calculateTotalPrice();
+
+          window.localStorage.setItem("app", JSON.stringify({
+               currentCategory,
+               currentCurrency,
+               currentCurrencySymbol,
+               productId,
+               productCart: Array.from(productCart.entries()),
+               totalPrice,
+               pageNames,
+               countInCart
+          }));
+     }
+
+     setPageNames = (newNames) => {
+          this.setState({ pageNames: newNames });
+     }
+
+     getCountOfItem = (key) => {
+          let mapArray = this.state.productCart;
+
+          if (mapArray.has(key)) {
+               return mapArray.get(key).length;
+          }
      }
 
      getCountOfAllItems = () => {
-          let res = 0;
-          this.state.productCart.forEach(el => res++)
-          return res
-     }
+          if (this.state.productCart.size === 0) {
+               this.setState({ countInCart: 0 });
+          } else {
+               let array = [];
 
-     getUniqProds = () => {
-          let array = [];
+               this.state.productCart.forEach(el => {
+                    array.push(el.length);
+               })
 
-          const filterArray = (array, identify) => {
+               let count = array.reduce((a, b) => a + b);
 
-               for (let i of array) {
-                    let count = 0;
-                    for (let j of array) {
-                         if (i.id === j.id && findObjectValues(i.selectedAttributes, "name") === findObjectValues(j.selectedAttributes, "name") && findObjectValues(i.selectedAttributes, "value") === findObjectValues(j.selectedAttributes, "value")) {
-                              count++;
-                              i.count = count;
-                         }
-                    }
-               }
-
-               const matches = {};
-               const filtered = [];
-               for (let i = 0, ii = array.length; i < ii; i++) {
-                    const identity = identify(array[i]);
-                    if (!(identity in matches)) {
-                         matches[identity] = true;
-                         filtered.push(array[i]);
-                    }
-               }
-
-               return filtered;
-          };
-
-
-          array = filterArray(this.state.productCart, item => item.id && findObjectValues(item.selectedAttributes, "name") && findObjectValues(item.selectedAttributes, "value"));
-
-
-          this.setState({ uniqProductsArray: array })
+               this.setState({ countInCart: count });
+          }
      }
 
      toggleBagWidget = () => {
           this.setState({ openedBagWidget: !this.state.openedBagWidget });
      }
 
-     addProductToCart = (product) => {
-          this.setState({ productCart: [...this.state.productCart, product] })
+     addProductToCart = (obj) => {
+          let mapArray = this.state.productCart;
+
+          let key = getSpecialKey(obj.id, obj.selectedAttributes);
+
+          if (!mapArray.has(key)) {
+               let subArray = [];
+               subArray.push(obj);
+               mapArray.set(key, subArray);
+          } else {
+               let getArray = mapArray.get(key);
+               getArray.push(obj);
+          }
+
+          this.setState({ productCart: mapArray });
      }
 
-     removeProductFromCart = (id, selectedAttributes) => {
-          const arr = this.state.productCart;
-          
-          arr.map(((el, index) => {
-               if (el.id === id && findObjectValues(el.selectedAttributes, "name") === findObjectValues(selectedAttributes, "name") && findObjectValues(el.selectedAttributes, "value") === findObjectValues(selectedAttributes, "value")) {
-                    return arr.splice(arr[index], 1)
+     removeProductFromCart = (key) => {
+          let mapArray = this.state.productCart;
+
+          if (!mapArray.has(key)) {
+               return false;
+          } else {
+               if (mapArray.get(key).length === 1) {
+                    mapArray.delete(key);
+               } else if (mapArray.get(key).length > 1) {
+                    mapArray.get(key).pop();
                }
-          }))
-          this.setState({productCart: arr})
+          }
+
+          this.setState({ productCart: mapArray });
      }
 
      renderAttributes = (type, id, name, items, layoutSize, selectedAttributes = null) => {
           switch (type) {
                case "text": {
-                    return <TextAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} selectedAttributes={selectedAttributes} layoutSize={layoutSize} />
+                    return <TextAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} selectedAttributes={selectedAttributes} layoutSize={layoutSize} />;
                }
                case "swatch": {
-                    return <SwatchAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} selectedAttributes={selectedAttributes} layoutSize={layoutSize} />
+                    return <SwatchAttr key={id} id={id} name={name} items={items} getAttributes={this.getAttributes} selectedAttributes={selectedAttributes} layoutSize={layoutSize} />;
                }
                default: {
-                    return false
+                    return false;
                }
           }
      }
 
      sumOperation = (sum, operation) => {
-          if (operation === "+") this.setState({ totalPrice: Number.parseFloat((this.state.totalPrice + sum).toFixed(2)) })
-          else this.setState({ totalPrice: Number.parseFloat((this.state.totalPrice - sum).toFixed(2)) })
+          if (operation === "+") this.setState({ totalPrice: Number.parseFloat((this.state.totalPrice + sum).toFixed(2)) });
+          else this.setState({ totalPrice: Number.parseFloat((this.state.totalPrice - sum).toFixed(2)) });
      }
 
      calculateTotalPrice = () => {
           let total = 0;
-          let symbol = ''
-          this.state.productCart.forEach(element => {
-               element.prices.forEach(el => {
-                    const amount = findObjectValues(el, 'amount');
-                    const label = findObjectValues(el, 'label');
-                    const elemSymbol = findObjectValues(el, 'symbol');
 
-                    return label === this.state.currentCurrency ? (total += amount, symbol = elemSymbol) : (false);
+          this.state.productCart.forEach((element, key) => {
+               element.forEach(item => {
+                    item.prices.forEach(currency => {
+                         const { amount } = currency;
+                         const { label } = currency.currency;
 
-               })
+                         return label === this.state.currentCurrency ? total += amount : false;
+                    });
+               });
           });
 
-          return this.setState({ totalPrice: Number.parseFloat(total.toFixed(2)) })
+          this.setState({ totalPrice: Number.parseFloat(total.toFixed(2)) });
      }
 
      setProductId = (id) => {
-          this.setState({ productId: id })
+          this.setState({ productId: id });
      }
 
      setCategory = (category) => {
@@ -139,23 +177,24 @@ class UserProvider extends React.Component {
 
      render() {
           const { children } = this.props;
-          const { currentCategory, currentCurrency, productId, productCart, totalPrice, openedBagWidget, tax, currentCurrencySymbol, uniqProductsArray } = this.state;
-          const { setCategory, setCurrency, setProductId, addProductToCart, calculateTotalPrice, toggleBagWidget, renderAttributes, sumOperation, getUniqProds, getCountOfItem, getCountOfAllItems, removeProductFromCart } = this;
+          const { currentCategory, currentCurrency, productId, productCart, totalPrice, openedBagWidget, tax, currentCurrencySymbol, countInCart, pageNames } = this.state;
+          const { setCategory, setCurrency, setProductId, addProductToCart, calculateTotalPrice, toggleBagWidget, renderAttributes, sumOperation, getCountOfItem, getCountOfAllItems, removeProductFromCart, setPageNames } = this;
 
           return (
                <UserContext.Provider value={{
                     currentCategory,
                     currentCurrency,
+                    countInCart,
                     productId,
                     currentCurrencySymbol,
                     productCart,
                     totalPrice,
                     openedBagWidget,
                     tax,
-                    uniqProductsArray,
+                    pageNames,
+                    setPageNames,
                     getCountOfAllItems,
                     removeProductFromCart,
-                    getUniqProds,
                     renderAttributes,
                     toggleBagWidget,
                     sumOperation,
@@ -168,7 +207,7 @@ class UserProvider extends React.Component {
                }}>
                     {children}
                </UserContext.Provider>
-          )
+          );
      }
 }
 

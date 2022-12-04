@@ -61,12 +61,34 @@
 
           &:disabled {
                cursor: auto;
+               opacity: 50%;
           }
      }
 
      &__description {
+          display: flex;
+          flex-direction: column;
+          gap: 13px;
+
+          & > p {
+               line-height: 1.4;
+          }
+          
           & > div > ul {
-               list-style: disc;
+               @include flexAlign(flex, flex-start center);
+               flex-direction: column;
+               gap: 13px;
+               list-style: square;
+
+               & > li {
+                    line-height: 1.4;
+               }
+          }
+
+          h1, h2, h3 {
+               font-weight: 600;
+               font-size: 20px;
+               margin-top: 10px;
           }
      }
 

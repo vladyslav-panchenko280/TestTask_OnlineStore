@@ -1,22 +1,24 @@
 import React from "react";
 import UserContext from "../../UserContext";
-import { findObjectValues } from '../../functions/findObjectValues';
 
 class Prices extends React.PureComponent {
      static contextType = UserContext;
 
      renderPrice = prices => {
-          return prices.map(el => {
-               const amount = findObjectValues(el, 'amount');
-               const label = findObjectValues(el, 'label');
-               const symbol = findObjectValues(el, 'symbol');
+          const { currentCurrency } = this.context;
 
-               return label === this.context.currentCurrency ? `${symbol}${amount}` : false
+          return prices.map(el => {
+               const { amount } = el;
+               const { label, symbol } = el.currency;
+
+               return label === currentCurrency ? `${symbol}${amount}` : false
           })
      }
 
      render() {
-          return <span className={this.props.class}>{this.renderPrice(this.props.prices)}</span>
+          const { renderPrice } = this;
+
+          return <span className={this.props.class}>{renderPrice(this.props.prices)}</span>
      }
 }
 

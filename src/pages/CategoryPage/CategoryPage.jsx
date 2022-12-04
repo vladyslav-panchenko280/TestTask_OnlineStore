@@ -1,83 +1,44 @@
 import React from "react";
 import UserContext from "../../UserContext";
+import CategoryPageItem from "../../components/CategoryPageItem/CategoryPageItem";
 import { Query } from "@apollo/client/react/components";
 import { FETCH_CATEGORY_PRODUCTS } from "../../requests/FETCH_CATEGORY_PRODUCTS";
-import { findObjectValues } from "../../functions/findObjectValues";
-import { Link } from 'react-router-dom';
-import shoppingBag from './shoppingBag.svg';
-import Prices from "../../components/Prices/Prices";
 
 class CategoryPage extends React.PureComponent {
      static contextType = UserContext;
 
-     renderPrice = (prices) => {
-          return prices.map(el => {
-               const amount = findObjectValues(el, 'amount');
-               const label = findObjectValues(el, 'label');
-               const symbol = findObjectValues(el, 'symbol');
-
-               return label === this.context.currentCurrency ? `${amount}${symbol}` : false
-          })
-     }
-
-     renderButton = (id, name, gallery, brand, inStock, attributes, prices) => {
-          return (
-               inStock ?
-               <button className="categoryPage__purchaseBtn"
-                    onClick={() => {this.context.addProductToCart({ id: id, name: name, gallery: gallery, brand: brand, inStock: inStock, attributes: attributes, prices: prices, selectedAttributes: undefined })
-                    }}
-               >
-                    <img src={shoppingBag} alt="Shopping bag" />
-               </button> : <button className="categoryPage__purchaseBtn" disabled onClick={event => event.preventDefault()}>
-                    <img src={shoppingBag} alt="Shopping bag" />
-               </button>
-          )
-     }
-
      renderProducts = products => {
+
           return products.map(prod => {
-               const id = findObjectValues(prod, 'id');
-               const inStock = findObjectValues(prod, 'inStock');
-               const gallery = findObjectValues(prod, 'gallery');
-               const name = findObjectValues(prod, 'name');
-               const prices = findObjectValues(prod, 'prices');
-               const brand = findObjectValues(prod, 'brand');
-               const attributes = findObjectValues(prod, 'attributes');
+               const { id, inStock, gallery, name, prices, brand, attributes } = prod;
 
                return (
                     <li key={id}>
-                         <Link to={`/${this.context.currentCategory}/${id}`}
-                              onClick={() => this.context.setProductId(id)}>
-                              <div className="categoryPage__productWrapper">
-                                   <div className="categoryPage__imgWrapper">
-                                        {inStock ? false : <div>OUT OF STOCK</div>}
-                                        <img src={gallery[0]} alt="Prod pic" />
-                                        {this.renderButton(id, name, gallery, brand, inStock, attributes, prices)}
-                                   </div>
-                                   <p className="categoryPage__productName">{name}</p>
-                                   <Prices class={"categoryPage__productPrice"} prices={prices} />
-                              </div>
-                         </Link>
+                         <CategoryPageItem id={id} inStock={inStock} gallery={gallery} name={name} prices={prices} brand={brand} attributes={attributes} />
                     </li>
                )
           })
      }
 
      renderByCategory = categories => {
+          const { currentCategory } = this.context;
+          const { renderProducts } = this;
+
           return categories.map(el => {
-               const name = findObjectValues(el, 'name');
-               const products = findObjectValues(el, 'products');
-               return name === this.context.currentCategory ?
-                    this.renderProducts(products)
-                    : false
+               const { name, products } = el;
+
+               return name === currentCategory ? renderProducts(products) : false;
           })
      }
 
      render() {
+          const { currentCategory } = this.context;
+          const { renderByCategory } = this;
+
           return (
-               <section className="categoryPage">
+               <section className="categoryPage" >
                     <div>
-                         <h2>{this.context.currentCategory}</h2>
+                         <h2>{currentCategory}</h2>
                          <ul className="categoryPage__products">
 
                               <Query query={FETCH_CATEGORY_PRODUCTS}>
@@ -85,16 +46,17 @@ class CategoryPage extends React.PureComponent {
                                         if (loading) return null;
                                         if (error) return console.log(error);
 
-                                        const categories = findObjectValues(data, 'categories');
+                                        const { categories } = data;
 
-                                        return this.renderByCategory(categories)
+                                        return renderByCategory(categories);
                                    }}
                               </Query>
                          </ul>
                     </div>
                </section>
-          )
+          );
      }
 }
+
 
 export default CategoryPage;

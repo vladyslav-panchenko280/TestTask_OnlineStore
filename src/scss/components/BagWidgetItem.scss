@@ -1,5 +1,5 @@
 .bagWidgetItem {
-     @include buildSize(inherit, 190px);
+     @include buildSize(inherit, 100%);
      @include flexAlign(flex, center, space-between);
 
      &__info {
@@ -25,18 +25,19 @@
      }
 
      &__gallery {
-          @include buildSize(120px, 190px);
+          @include buildSize(127px, 190px);
           position: relative;
 
           &>img {
-               object-fit: cover;
+               object-fit:contain;
                @include buildSize(100%, 100%);
           }
      }
 
      &__galleryAndCount {
-          @include flexAlign(flex, center, space-between);
-          min-width: 153px
+          @include flexAlign(flex, flex-start, space-between);
+          gap: 10px;
+          height: 100%;
      }
 
      &__attributes {
@@ -62,6 +63,7 @@
                & > span {
                     font-size: 24px;
                     font-weight: 400;
+                    user-select: none;
                }
           }
      }

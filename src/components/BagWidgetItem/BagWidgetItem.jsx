@@ -1,96 +1,113 @@
-import React from 'react';
-import { findObjectValues } from '../../functions/findObjectValues';
+import React from "react";
 import UserContext from "../../UserContext";
-import Prices from '../Prices/Prices';
-import AttributesComponent from '../ProductAttributes/AttributesComponent';
+import Prices from "../Prices/Prices";
+import AttributesComponent from "../ProductAttributes/AttributesComponent";
+import { getSpecialKey } from "../../functions/getSpecialKey";
 
 class BagWidgetItem extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
           attributes: this.props.selectedAttributes,
-          count: this.context.getCountOfItem(this.props.id),
+          count: this.props.count,
      }
 
      componentDidMount() {
-          this.context.calculateTotalPrice()
-     }
+          const { calculateTotalPrice } = this.context;
 
-     getAttributes = (value) => {
-          const removeFromBag = this.state.attributes.filter(el => el.id !== value.id);
-          this.setState({ attributes: [...removeFromBag, value] });
+          calculateTotalPrice();
      }
 
      increaseCount = () => {
+          const { count } = this.state;
+          const { addProductToCart, getCountOfItem, currentCurrency, sumOperation, getCountOfAllItems } = this.context;
+          const { id, name, brand, gallery, attributes, prices, inStock, selectedAttributes } = this.props;
 
-          if (this.state.count) {
-               this.setState({ count: this.state.count + 1 });
-               this.context.addProductToCart({ id: this.props.id, name: this.props.name, gallery: this.props.gallery, brand: this.props.brand, inStock: this.props.inStock, attributes: this.props.attributes, prices: this.props.prices, count: this.props.count })
+          if (count) {
 
+               addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: selectedAttributes });
 
-               this.props.prices.map(el => {
-                    const amount = findObjectValues(el, 'amount');
-                    const label = findObjectValues(el, 'label');
+               let key = getSpecialKey(id, selectedAttributes);
 
-                    return label === this.context.currentCurrency ? this.context.sumOperation(amount
-                         , "+") : false
-               })
+               this.setState({ count: getCountOfItem(key) });
 
-               this.context.getUniqProds()
+               prices.map(el => {
+                    const { amount } = el;
+                    const { label } = el.currency;
 
-               console.log(this.context.uniqProductsArray)
+                    return label === currentCurrency ? sumOperation(amount, "+") : false
+               });
+
+               getCountOfAllItems();
+
           }
      }
 
      decreaseCount = () => {
+          const { count } = this.state;
+          const { removeProductFromCart, getCountOfItem, currentCurrency, sumOperation, getCountOfAllItems } = this.context;
+          const { id, prices, selectedAttributes } = this.props;
 
-          if (this.state.count > 0) {
-               this.setState({ count: this.state.count - 1 });
-               this.context.removeProductFromCart(this.props.id, this.state.attributes);
 
-               this.props.prices.map(el => {
-                    const amount = findObjectValues(el, 'amount');
-                    const label = findObjectValues(el, 'label');
+          if (count > 0) {
 
-                    return label === this.context.currentCurrency ? this.context.sumOperation(amount
+               const key = getSpecialKey(id, selectedAttributes)
+
+               removeProductFromCart(key);
+
+               this.setState({ count: getCountOfItem(key) });
+
+               prices.map(el => {
+                    const { amount } = el;
+                    const { label } = el.currency;
+
+                    return label === currentCurrency ? sumOperation(amount
                          , "-") : false
-               })
-               this.context.getUniqProds()
+               });
+
+               getCountOfAllItems();
           }
+
      }
 
      render() {
-          const { name, brand, prices, attributes, gallery } = this.props;
-
+          const { name, brand, prices, attributes, gallery, id, selectedAttributes } = this.props;
+          const { increaseCount, decreaseCount } = this;
+          const { calculateTotalPrice } = this.context;
+          const { count } = this.state;
 
           return (
-               <div className='bagWidgetItem'>
-                    <div className='bagWidgetItem__info'>
+               <div className="bagWidgetItem">
+                    <div className="bagWidgetItem__info">
                          <p className="bagWidgetItem__prodName">{name} <br />
                               <span>{brand}</span>
                          </p>
                          <div className="bagWidgetItem__price">
                               <Prices prices={prices} />
                          </div>
-                         <AttributesComponent className={"bagWidgetItem__attributes"} selectedAttributes={this.props.selectedAttributes} isDisabled={true} attributes={attributes} layoutSize={'small'} />
+                         {
+                              attributes.length ?
+                                   <AttributesComponent className={"bagWidgetItem__attributes"} selectedAttributes={selectedAttributes} isDisabled={true} attributes={attributes} layoutSize={"small"} productId={id} /> :
+                                   false
+                         }
                     </div>
-                    <div className='bagWidgetItem__galleryAndCount'>
-                         <div className='bagWidgetItem__countWrapper'>
+                    <div className="bagWidgetItem__galleryAndCount">
+                         <div className="bagWidgetItem__countWrapper">
                               <div>
                                    <span onClick={() => {
-                                        this.context.calculateTotalPrice()
-                                        this.increaseCount()
+                                        calculateTotalPrice()
+                                        increaseCount()
                                    }} >+</span>
                               </div>
-                              <p>{this.state.count}</p>
+                              <p>{count}</p>
                               <div>
                                    <span onClick={() => {
-                                        this.context.calculateTotalPrice()
-                                        this.decreaseCount()
+                                        calculateTotalPrice()
+                                        decreaseCount()
                                    }}>-</span>
                               </div>
                          </div>
-                         <div className='bagWidgetItem__gallery'>
+                         <div className="bagWidgetItem__gallery">
                               <img src={gallery[0]} alt={name} />
                          </div>
                     </div>

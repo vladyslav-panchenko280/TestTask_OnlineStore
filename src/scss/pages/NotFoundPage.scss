@@ -1,0 +1,33 @@
+.notFoundPage {
+     @include buildSize(inherit, inherit);
+     @include flexAlign(flex, center, center);
+     margin: 0 auto;
+     min-height: inherit;
+
+     &>div {
+          flex-direction: column;
+          display: flex;
+          row-gap: 40px;
+          align-items: center;
+
+          &>h3 {
+               font-size: 100px;
+               font-weight: 600;
+          }
+
+          &>p {
+               font-size: 20px;
+          }
+
+          &>button {
+               @include buildFont(16px, 500, $blackColor);
+               background: none;
+               @include flexAlign(flex, center, center);
+               cursor: pointer;
+
+               &>a {
+                    color: #000;
+               }
+          }
+     }
+}

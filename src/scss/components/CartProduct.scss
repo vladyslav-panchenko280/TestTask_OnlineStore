@@ -25,7 +25,7 @@
           position: relative;
 
           &>img {
-               object-fit: cover;
+               object-fit: contain;
                @include buildSize(100%, 100%);
           }
      }
@@ -53,6 +53,7 @@
                &>span {
                     font-size: 30px;
                     font-weight: 400;
+                    user-select: none;
                }
           }
      }

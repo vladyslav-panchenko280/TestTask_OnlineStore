@@ -1,47 +1,55 @@
-import React from 'react';
-import { findObjectValues } from '../../functions/findObjectValues';
+import React from "react";
 
 class TextAttr extends React.PureComponent {
      constructor() {
           super();
-          this.type = 'text';
-         
+          this.type = "text";
+
      }
 
      state = {
-          activeValueId: "" 
+          activeValueId: ""
      }
 
      componentDidMount() {
-          if (this.props.selectedAttributes) {
-               this.props.selectedAttributes.map(el => {
-                    const elId = findObjectValues(el, 'id')
-                    const valueId = findObjectValues(el, 'valueId');
-                    if (elId === this.props.id) {
-                         return this.chooseValue(valueId)
+          const { chooseValue } = this;
+          const { selectedAttributes, id } = this.props;
+
+          if (selectedAttributes) {
+               selectedAttributes.forEach(el => {
+                    if (el.id === id) {
+                         chooseValue(el.items.id);
                     }
                })
           }
      }
 
      chooseValue = (id) => {
-          this.setState({activeValueId: id})
+          this.setState({ activeValueId: id })
      }
 
      render() {
-          const {id, name, items, getAttributes, layoutSize, isDisabled=false } = this.props;
+          const { id, name, items, getAttributes, layoutSize, isDisabled = false, productId } = this.props;
+          const { activeValueId } = this.state;
+          const { chooseValue } = this;
+
           return (
-               <div className='textAttr' id={id}>
+               <div className="textAttr" id={id}>
                     <p className={`textAttr__title--${layoutSize}`}>{name.toUpperCase()}:</p>
                     <ul>{items.map(el => {
-                         const value = findObjectValues(el, 'value');
-                         const valueId = findObjectValues(el, 'id');
-                         const displayValue = findObjectValues(el, 'displayValue');
 
-                         return isDisabled ? <li key={valueId} style={{cursor: "auto" }} className={this.state.activeValueId === valueId ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} disabled><span className={this.state.activeValueId === valueId ? 'textAttr--activeSpan' : ""}>{value}</span></li> : <li key={valueId} className={this.state.activeValueId === valueId ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} onClick={() => {
-                              getAttributes({id: id, name: name, type: this.type, items: {value: value, valueId: valueId, displayValue: displayValue}})
-                              this.chooseValue(valueId);
-                         }}><span className={this.state.activeValueId === valueId ? 'textAttr--activeSpan' : ""}>{value}</span></li>;
+                         if (isDisabled) {
+                              return (
+                                   <li key={`${productId}-${name}-${el.displayValue}`} style={{ cursor: "auto" }} className={this.state.activeValueId === el.id ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} disabled><span className={activeValueId === el.id ? "textAttr--activeSpan" : ""}>{el.value}</span></li>
+                              )
+                         } else {
+                              return (
+                                   <li key={`${productId}-${name}-${el.displayValue}`} className={activeValueId === el.id ? `textAttr--activeLi textAttr__item--${layoutSize}` : `textAttr__item--${layoutSize}`} onClick={() => {
+                                        getAttributes({ id: id, name: name, type: this.type, items: { value: el.value, id: el.id, displayValue: el.displayValue } })
+                                        chooseValue(el.id);
+                                   }}><span className={activeValueId === el.id ? "textAttr--activeSpan" : ""}>{el.value}</span></li>
+                              );
+                         }
                     }
                     )}</ul>
 
@@ -50,4 +58,4 @@ class TextAttr extends React.PureComponent {
      }
 }
 
-export {TextAttr};
+export { TextAttr };

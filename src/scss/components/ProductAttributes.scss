@@ -75,6 +75,7 @@
      &>ul {
           @include flexAlign(flex, flex-start, flex-start);
           gap: 10px;
+          padding-left: 3px;
 
           &>li {
                @include flexAlign(flex, center, center);

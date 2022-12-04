@@ -1,89 +1,115 @@
-import React from 'react';
-import { findObjectValues } from '../../functions/findObjectValues';
+import React from "react";
 import UserContext from "../../UserContext";
-import Prices from '../Prices/Prices';
-import AttributesComponent from '../ProductAttributes/AttributesComponent';
-import leftScroll from './leftScroll.svg';
-import rightScroll from './rightScroll.svg';
+import Prices from "../Prices/Prices";
+import AttributesComponent from "../ProductAttributes/AttributesComponent";
+import leftScroll from "./leftScroll.svg";
+import rightScroll from "./rightScroll.svg";
+import { getSpecialKey } from "../../functions/getSpecialKey";
 
 class CartProduct extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
-          attributes: [],
+          attributes: this.props.selectedAttributes,
           galleryPhotoIndex: 0,
-          count: this.context.getCountOfItem(this.props.id),
+          count: this.props.count
      }
 
      componentDidMount() {
-          this.forceUpdate(this.setState({ count: this.context.getCountOfItem(this.props.id) }))
-          this.context.calculateTotalPrice()
+          const { calculateTotalPrice } = this.context;
+
+          calculateTotalPrice();
+     }
+
+     componentDidUpdate() {
+          this.setState({ count: this.props.count })
      }
 
      scrollToRight = (gallery) => {
-          this.setState({ galleryPhotoIndex: this.state.galleryPhotoIndex + 1 });
-          if (this.state.galleryPhotoIndex > gallery.length - 2) {
+          const { galleryPhotoIndex } = this.state;
+
+          this.setState({ galleryPhotoIndex: galleryPhotoIndex + 1 });
+          if (galleryPhotoIndex > gallery.length - 2) {
                this.setState({ galleryPhotoIndex: 0 })
           }
-
      }
 
      scrollToLeft = (gallery) => {
-          if (this.state.galleryPhotoIndex <= 0) this.setState({ galleryPhotoIndex: gallery.length - 1 });
-          if (this.state.galleryPhotoIndex !== 0 && this.state.galleryPhotoIndex > 0) {
-               this.setState({ galleryPhotoIndex: this.state.galleryPhotoIndex - 1 });
+          const { galleryPhotoIndex } = this.state;
+
+          if (galleryPhotoIndex <= 0) this.setState({ galleryPhotoIndex: gallery.length - 1 });
+          if (galleryPhotoIndex !== 0 && galleryPhotoIndex > 0) {
+               this.setState({ galleryPhotoIndex: galleryPhotoIndex - 1 });
           }
      }
 
      increaseCount = () => {
+          const { name, brand, prices, attributes, gallery, id, selectedAttributes, inStock } = this.props;
+          const { addProductToCart, getCountOfItem, currentCurrency, sumOperation, getCountOfAllItems } = this.context;
+          const { count } = this.state;
 
-          if (this.state.count) {
-               this.setState({ count: this.state.count + 1 });
-               this.context.addProductToCart({ id: this.props.id, name: this.props.name, gallery: this.props.gallery, brand: this.props.brand, inStock: this.props.inStock, attributes: this.props.attributes, prices: this.props.prices, count: this.props.count })
+          if (count) {
 
+               addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: selectedAttributes });
 
-               this.props.prices.map(el => {
-                    const amount = findObjectValues(el, 'amount');
-                    const label = findObjectValues(el, 'label');
+               let key = getSpecialKey(id, selectedAttributes);
 
-                    return label === this.context.currentCurrency ? this.context.sumOperation(amount
-                         , "+") : false
-               })
-               this.context.getUniqProds()
+               this.setState({ count: getCountOfItem(key) });
+
+               prices.map(el => {
+                    const { amount } = el;
+                    const { label } = el.currency;
+
+                    return label === currentCurrency ? sumOperation(amount, "+") : false
+               });
+
+               getCountOfAllItems();
+
           }
      }
 
      decreaseCount = () => {
+          const { prices, id, selectedAttributes } = this.props;
+          const { removeProductFromCart, getCountOfItem, currentCurrency, sumOperation, getCountOfAllItems } = this.context;
+          const { count } = this.state;
 
-          if (this.state.count > 0) {
-               this.setState({ count: this.state.count - 1 });
-               this.context.removeProductFromCart(this.props.id, this.state.attributes);
+          if (count > 0) {
 
-               this.props.prices.map(el => {
-                    const amount = findObjectValues(el, 'amount');
-                    const label = findObjectValues(el, 'label');
+               const key = getSpecialKey(id, selectedAttributes);
 
-                    return label === this.context.currentCurrency ? this.context.sumOperation(amount
-                         , "-") : false
-               })
-               this.context.getUniqProds()
+               removeProductFromCart(key);
+
+               this.setState({ count: getCountOfItem(key) });
+
+               prices.map(el => {
+                    const { amount } = el;
+                    const { label } = el.currency;
+
+                    return label === currentCurrency ? sumOperation(amount, "-") : false
+               });
+
+               getCountOfAllItems();
           }
+
      }
 
      renderCount = () => {
+          const { increaseCount, decreaseCount } = this;
+          const { calculateTotalPrice } = this.context;
+          const { count } = this.state;
           return (
                <>
                     <div>
                          <span onClick={() => {
-                              this.context.calculateTotalPrice()
-                              this.increaseCount()
+                              calculateTotalPrice()
+                              increaseCount()
                          }} >+</span>
                     </div>
-                    <p>{this.state.count}</p>
+                    <p>{count}</p>
                     <div>
                          <span onClick={() => {
-                              this.context.calculateTotalPrice()
-                              this.decreaseCount()
+                              calculateTotalPrice()
+                              decreaseCount()
                          }}>-</span>
                     </div>
                </>
@@ -91,13 +117,16 @@ class CartProduct extends React.PureComponent {
      }
 
      renderGallery = () => {
+          const { gallery, name } = this.props;
+          const { galleryPhotoIndex } = this.state;
+
           return (
                <>
-                    <img src={this.props.gallery[this.state.galleryPhotoIndex]} alt={this.props.name} />
+                    <img src={gallery[galleryPhotoIndex]} alt={name} />
                     {
-                         (this.props.gallery.length > 1) ? <div className='cartProduct__scrollGallery'>
-                              <img src={leftScroll} onClick={() => { this.scrollToLeft(this.props.gallery) }} alt="left scroll" />
-                              <img src={rightScroll} onClick={() => { this.scrollToRight(this.props.gallery) }} alt="right scroll" />
+                         (gallery.length > 1) ? <div className="cartProduct__scrollGallery">
+                              <img src={leftScroll} onClick={() => { this.scrollToLeft(gallery) }} alt="left scroll" />
+                              <img src={rightScroll} onClick={() => { this.scrollToRight(gallery) }} alt="right scroll" />
                          </div> : false
                     }
                </>
@@ -106,12 +135,13 @@ class CartProduct extends React.PureComponent {
 
 
      render() {
-          const { name, brand, prices, attributes } = this.props;
+          const { name, brand, prices, attributes, id } = this.props;
+          const { renderCount, renderGallery } = this;
 
           return (
 
-               <div className='cartProduct'>
-                    <div className='cartProduct__info'>
+               <div className="cartProduct">
+                    <div className="cartProduct__info">
                          <p className="cartProduct__prodName">{name} <br />
                               <span>{brand}</span>
                          </p>
@@ -119,12 +149,12 @@ class CartProduct extends React.PureComponent {
                               <p>Price:</p>
                               <Prices prices={prices} />
                          </div>
-                         <AttributesComponent className={"productPage__attributes"} selectedAttributes={this.props.selectedAttributes} isDisabled={true} attributes={attributes} layoutSize={'big'} />
+                         <AttributesComponent className={"productPage__attributes"} selectedAttributes={this.state.attributes} isDisabled={true} attributes={attributes} layoutSize={"big"} productId={id} />
 
                     </div>
-                    <div className='cartProduct__galleryAndCount'>
-                         <div className='cartProduct__countWrapper'>{this.renderCount()}</div>
-                         <div className='cartProduct__gallery'>{this.renderGallery()}</div>
+                    <div className="cartProduct__galleryAndCount">
+                         <div className="cartProduct__countWrapper">{renderCount()}</div>
+                         <div className="cartProduct__gallery">{renderGallery()}</div>
                     </div>
                </div>
           )

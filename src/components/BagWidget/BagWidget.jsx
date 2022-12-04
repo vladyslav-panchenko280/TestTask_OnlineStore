@@ -1,8 +1,7 @@
 import React from "react";
 import UserContext from "../../UserContext";
-import { findObjectValues } from "../../functions/findObjectValues";
-import { Link } from "react-router-dom";
 import BagWidgetItem from "../BagWidgetItem/BagWidgetItem";
+import { Link } from "react-router-dom";
 
 class BagWidget extends React.PureComponent {
      static contextType = UserContext;
@@ -12,75 +11,94 @@ class BagWidget extends React.PureComponent {
           this.wrapperRef = React.createRef();
      }
 
-     handleClickOutside = (event) => {
-          if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && this.context.openedBagWidget && event.target !== document.querySelector(".header__shoppingBag > img")) {
+     componentWillUnmount() {
+          document.removeEventListener("mousedown", this.handleClickOutside);
+     }
+     componentDidMount() {
+          document.addEventListener("mousedown", this.handleClickOutside);
+     }
 
-               this.changeOpened();
+     handleClickOutside = (event) => {
+          const { wrapperRef, changeOpened } = this;
+          const { openedBagWidget } = this.context;
+
+          if (wrapperRef && !wrapperRef.current.contains(event.target) && openedBagWidget && event.target !== document.querySelector(".header__shoppingBag > img")) {
+
+               changeOpened();
           }
      }
 
      renderItems = () => {
+          const { productCart, getCountOfItem } = this.context;
 
-          return (this.context.uniqProductsArray.map(el => {
-               const id = findObjectValues(el, 'id');
-               const name = findObjectValues(el, 'name');
-               const brand = findObjectValues(el, 'brand');
-               const prices = findObjectValues(el, 'prices');
-               const attributes = findObjectValues(el, 'attributes');
-               const gallery = findObjectValues(el, 'gallery');
-               const inStock = findObjectValues(el, 'inStock');
-               const selectedAttributes = findObjectValues(el, 'selectedAttributes');
-               const count = findObjectValues(el, "count")
+          const arr = [...productCart].map(([key, el]) => {
+               const {id, name, brand, prices, attributes, gallery, inStock, selectedAttributes} = el[0];
+
+               const count = getCountOfItem(key);
 
                return (
 
-                    <li key={this.context.uniqProductsArray.indexOf(el)}>
+                    <li key={`${id}-${key}`}>
                          <BagWidgetItem id={id} name={name} brand={brand} prices={prices} attributes={attributes} gallery={gallery} selectedAttributes={selectedAttributes} inStock={inStock} count={count} />
                     </li>
                )
+          });
 
+          return arr
 
-          }))
      }
 
 
      changeOpened = () => {
-          this.context.toggleBagWidget();
-     }
+          const { toggleBagWidget } = this.context;
 
-     componentWillUnmount() {
-          document.removeEventListener("mousedown", this.handleClickOutside);
-          this.context.getUniqProds()
-     }
-     componentDidMount() {
-          this.context.getUniqProds()
-          document.addEventListener("mousedown", this.handleClickOutside);
+          toggleBagWidget();
      }
 
      checkout = () => {
+          const { productCart, totalPrice, tax } = this.context;
+
+          let taxOfTotal = (totalPrice * (tax / 100));
+          let totalWithTax = totalPrice + taxOfTotal;
+
           console.group();
-          console.log('Products:');
-          console.log(this.context.productCart);
-          console.log('Total:');
-          console.log(this.context.totalPrice);
+          console.log("Products:");
+          console.log(productCart);
+          console.log("Total:");
+          console.log(totalWithTax.toFixed(2));
           console.groupEnd();
      }
 
+     renderButton = () => {
+          const { checkout } = this;
+          const { productCart } = this.context;
+
+          return (
+               productCart.size !== 0 ?
+                    <button className="bagWidget__primaryBtn" onClick={checkout}>CHECKOUT</button> :
+                    <button className="bagWidget__primaryBtn" disabled>CHECKOUT</button>
+          )
+     }
+
      render() {
-          const { totalPrice, currentCurrencySymbol, getCountOfAllItems } = this.context;
+          const { totalPrice, currentCurrencySymbol, countInCart, tax } = this.context;
+          const { wrapperRef, renderItems, changeOpened, renderButton } = this;
+
+          let taxOfTotal = (totalPrice * (tax / 100));
+          let totalWithTax = totalPrice + taxOfTotal;
 
           return (
                <div className="overlay">
-                    <div className="bagWidget" ref={this.wrapperRef}>
+                    <div className="bagWidget" ref={wrapperRef}>
                          <div className="bagWidget__container">
-                              <p className="bagWidget__title">My bag <span>{getCountOfAllItems()} items</span></p>
-                              <ul className='bagWidget__products'>
-                                   {this.renderItems()}
+                              <p className="bagWidget__title">My bag <span>{countInCart} items</span></p>
+                              <ul className="bagWidget__products">
+                                   {renderItems()}
                               </ul>
-                              <p className="bagWidget__totalPrice"><span>Total:</span><span>{`${currentCurrencySymbol}${totalPrice}`}</span></p>
+                              <p className="bagWidget__totalPrice"><span>Total:</span><span>{`${currentCurrencySymbol}${totalWithTax.toFixed(2)}`}</span></p>
                               <div className="bagWidget__btnContainer">
-                                   <Link to={`/cart`} onClick={this.changeOpened} className="bagWidget__secondaryBtn">VIEW BAG</Link>
-                                   <button className="bagWidget__primaryBtn" onClick={this.checkout}>CHECKOUT</button>
+                                   <Link to={"/cart"} onClick={changeOpened} className="bagWidget__secondaryBtn">VIEW BAG</Link>
+                                   {renderButton()}
                               </div>
                          </div>
                     </div>

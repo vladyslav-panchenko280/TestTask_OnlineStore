@@ -1,0 +1,75 @@
+.categoryPageItem {
+     position: relative;
+
+     & a {
+          text-decoration: none;
+     }
+
+     &:hover .categoryPageItem__purchaseBtn {
+          position: absolute;
+          display: inline;
+          bottom: 70px;
+          right: 20px;
+          border-radius: 100%;
+          background: $primaryColor;
+          @include buildSize(52px, 52px);
+          transition: 1s solid;
+          cursor: pointer;
+          z-index: 30;
+     }
+
+     &__productWrapper {
+          width: 100%;
+          @include flexAlign(flex, flex-start, center);
+          flex-direction: column;
+          padding: 15px;
+          gap: 10px;
+     }
+
+     &__imgWrapper {
+          @include buildSize(100%, 300px);
+          margin-bottom: 10px;
+          position: relative;
+
+          &>div {
+               position: absolute;
+               @include buildSize(100%, 100%);
+               @include flexAlign(flex, center, center);
+               @include buildFont(24, 400, #8D8F9A);
+               background: $grayColor;
+               opacity: 0.5;
+          }
+
+          &>img {
+               @include buildSize(100%, 100%);
+               object-fit: contain;
+               z-index: 18;
+          }
+     }
+
+     &__purchaseBtn {
+          position: absolute;
+          display: none;
+          bottom: -20px;
+          right: 20px;
+          border-radius: 100%;
+          background: $primaryColor;
+          @include buildSize(52px, 52px);
+          transition: 1s solid;
+          cursor: pointer;
+
+          &:disabled {
+               cursor: auto;
+               opacity: 50%;
+               z-index: 10;
+          }
+     }
+
+     &__productName {
+          @include buildFont(18px, 300, $blackColor)
+     }
+
+     &__productPrice {
+          @include buildFont(18px, 500, $blackColor)
+     }
+}

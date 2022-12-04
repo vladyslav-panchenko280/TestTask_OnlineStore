@@ -13,15 +13,19 @@
 
      &__bagCount {
           @include buildSize(17px, 17px);
-          line-height: 1.3;
+          @include flexAlign(flex, center, center);
           left: 14px;
           top: -7px;
-          font-size: 14px;
           background: $blackColor;
           color: $whiteColor;
           border-radius: 100%;
           position: absolute;
           text-align: center;
+
+          & > span {
+               line-height: 1;
+               font-size: 12px;
+          }
      }
 
      &__categoriesName {

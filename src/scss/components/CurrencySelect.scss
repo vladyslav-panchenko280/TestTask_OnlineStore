@@ -18,7 +18,7 @@
      &__btn {
           &--active {
                &::after {
-                    content: url('../../components/Header/arrow.svg');
+                    content: url("../../components/Header/arrow.svg");
                     position: absolute;
                     top: 34px;
                     left: 40px;
@@ -27,7 +27,7 @@
           }
           &--disable {
                &::after {
-                    content: url('../../components/Header/arrow.svg');
+                    content: url("../../components/Header/arrow.svg");
                     position: absolute;
                     top: 27px;
                     left: 40px;

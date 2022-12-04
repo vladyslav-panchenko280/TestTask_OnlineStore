@@ -1,24 +1,20 @@
 body {
-     margin: 0;
-     font-family: "Raleway";
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
-     width: 100%;
-   }
-   
-  //  code {
-  //    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-  //      monospace;
-  //  }
+  margin: 0;
+  font-family: "Raleway";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+}
 
-   .main {
-    height: 100%;
-    width: 100%;
-    min-height: 100vh;
-    position: relative;
-   }
-   
-   *, *::after, *::before {
-     box-sizing: border-box;
-   }
-   
+.main {
+  height: 100%;
+  width: 100%;
+  min-height: calc(100vh - $headerHeight);
+  position: relative;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}

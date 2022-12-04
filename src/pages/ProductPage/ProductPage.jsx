@@ -1,72 +1,99 @@
 import React from "react";
-import { Query } from "@apollo/client/react/components";
 import UserContext from "../../UserContext";
 import Prices from "../../components/Prices/Prices";
 import AttributesComponent from "../../components/ProductAttributes/AttributesComponent";
-import { findObjectValues } from "../../functions/findObjectValues";
-import { sanitize } from "../../functions/sanitize"
-import { GET_PRODUCT_DATA } from "../../requests/GET_PRODUCT_DATA"
+import { HTMLParser } from "../../components/HTMLParser/HTMLParser";
+import { GET_PRODUCT_DATA } from "../../requests/GET_PRODUCT_DATA";
+import { Query } from "@apollo/client/react/components";
 
 class ProductPage extends React.PureComponent {
      static contextType = UserContext;
 
      state = {
           currentPicture: "",
-          attributes: []
+          selectedAttributes: [],
      }
 
      getAttributes = (value) => {
-          const removeFromBag = this.state.attributes.filter(el => el.id !== value.id);
-          this.setState({ attributes: [...removeFromBag, value] });
+          const { selectedAttributes } = this.state;
+
+          const removeFromBag = selectedAttributes.filter(el => el.id !== value.id);
+          this.setState({ selectedAttributes: [...removeFromBag, value] });
      }
 
      changeCurrentPicture = (value) => {
-          this.setState({ currentPicture: value })
+          this.setState({ currentPicture: value });
      }
 
      renderGallery = gallery => {
+          const { changeCurrentPicture } = this;
+
           return gallery.map(link => {
-               return <li key={gallery.indexOf(link)} onClick={() => {
-                    return this.changeCurrentPicture(link);
-               }}><img src={link} alt="product" /></li>
-          })
+               return (
+                    <li key={gallery.indexOf(link)} onClick={() => {
+                         return changeCurrentPicture(link);
+                    }}>
+                         <img src={link} alt="product" />
+                    </li>
+               );
+          });
      }
 
-     renderMainPhoto = (gallery, inStock) => {
-          if (this.state.currentPicture !== "") {
-               return (<img src={this.state.currentPicture} alt="product" />)
-          } else {
-               return (<img src={gallery[0]} alt="product" />)
-          }
-          
+     renderMainPhoto = (gallery) => {
+          const { currentPicture } = this.state;
 
+          if (currentPicture !== "") {
+               return (<img src={currentPicture} alt="product" />);
+          } else {
+               return (<img src={gallery[0]} alt="product" />);
+          }
+     }
+
+     renderButton = (attributes, selectedAttributes, id, name, brand, gallery, prices, inStock) => {
+          const { addProductToCart, getCountOfAllItems } = this.context;
+
+          const myCallback = (event) => {
+               if (attributes.length === selectedAttributes.length) {
+                    addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: selectedAttributes });
+
+                    getCountOfAllItems();
+
+               } else {
+                    event.preventDefault();
+               }
+          }
+          if (inStock) {
+
+               return (
+                    <button className="productPage__btn" onClick={myCallback}>ADD TO CART</button>
+               )
+          } else {
+               return <button className="productPage__btn" disabled>ADD TO CART</button>
+          }
      }
 
      render() {
+          const { productId } = this.context;
+          const { renderGallery, renderButton, renderMainPhoto, getAttributes } = this;
+          const { selectedAttributes } = this.state;
+
           return (
                <section className="productPage" >
-                    <Query query={GET_PRODUCT_DATA(this.context.productId)}>
+                    <Query query={GET_PRODUCT_DATA(productId)}>
                          {({ loading, error, data }) => {
                               if (loading) return null;
                               if (error) return console.log(error);
 
-                              const id = findObjectValues(data, 'id');
-                              const gallery = findObjectValues(data, 'gallery');
-                              const name = findObjectValues(data, 'name');
-                              const brand = findObjectValues(data, 'brand');
-                              const attributes = findObjectValues(data, 'attributes');
-                              const prices = findObjectValues(data, 'prices');
-                              const inStock = findObjectValues(data, 'inStock');
-                              const description = findObjectValues(data, 'description');
+                              const { id, gallery, name, brand, attributes, prices, inStock, description } = data.product;
 
                               return (
                                    <div>
                                         <div className="productPage__gallery">
                                              <ul>
-                                                  {this.renderGallery(gallery)}
+                                                  {renderGallery(gallery)}
                                              </ul>
                                              <div className="productPage__mainPhoto">
-                                                  {this.renderMainPhoto(gallery, inStock)}
+                                                  {renderMainPhoto(gallery, inStock)}
                                                   {inStock ? false : <div>OUT OF STOCK</div>}
                                              </div>
                                         </div>
@@ -74,19 +101,19 @@ class ProductPage extends React.PureComponent {
                                              <p className="productPage__name">{name} <br />
                                                   <span>{brand}</span>
                                              </p>
-                                             <AttributesComponent className={"productPage__attributes"} isDisabled={false} attributes={attributes} layoutSize={'big'} getAttributes={this.getAttributes}/>
+                                             {
+                                                  attributes.length ?
+                                                       <AttributesComponent className={"productPage__attributes"} isDisabled={false} attributes={attributes} layoutSize={"big"} getAttributes={getAttributes} productId={id} selectedAttributes={selectedAttributes} /> :
+                                                       false
+                                             }
                                              <div className="productPage__price">
                                                   <p>Price:</p>
                                                   <Prices prices={prices}></Prices>
                                              </div>
                                              {
-                                                  inStock ?
-                                                       <button className="productPage__btn" onClick={event => { (attributes.length === this.state.attributes.length) ? this.context.addProductToCart({ id: id, name: name, brand: brand, gallery: gallery, attributes: attributes, prices: prices, inStock: inStock, selectedAttributes: this.state.attributes }) : event.preventDefault() }}>ADD TO CART</button> :
-                                                       <button className="productPage__btn" disabled>ADD TO CART</button>
+                                                  renderButton(attributes, selectedAttributes, id, name, brand, gallery, prices, inStock)
                                              }
-                                             <div className="productPage__description">
-                                                  {sanitize(description)}
-                                             </div>
+                                             <HTMLParser className={"productPage__description"} data={description} />
                                         </div>
                                    </div>
                               )

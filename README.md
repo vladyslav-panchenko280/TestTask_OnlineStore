@@ -1,14 +1,14 @@
-<h1 align="center">React store template</h1>
+<h1 align="center">Majento store client</h1>
 
-<p align="center">
-<div display="flex">
-  <img src="./readme_assets/thumbnail.png" width="80%">
-  <img src="./readme_assets/bag-page.png" width="80%">
-  <img src="./readme_assets/bag-widget.png" width="80%">
+
+<div align="center" display="flex">
+  <img display="inline" src="./readme_assets/thambnail.png" width="30%">
+  <img display="inline" src="./readme_assets/bag-page.png" width="30%">
+  <img display="inline" src="./readme_assets/bag-widget.png" width="30%">
 </div>
 
 
-This is store client application, developed on react.</p>
+<p align="center">This is store client application, developed on react.</p>
 
 ## Pages
 

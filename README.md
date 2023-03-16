@@ -1,7 +1,12 @@
 <h1 align="center">React store template</h1>
 
 <p align="center">
-<img src="./thumbnail.png" width="80%">
+<div display="flex">
+  <img src="./readme_assets/thumbnail.png" width="80%">
+  <img src="./readme_assets/bag-page.png" width="80%">
+  <img src="./readme_assets/bag-widget.png" width="80%">
+</div>
+
 
 This is store client application, developed on react.</p>
 

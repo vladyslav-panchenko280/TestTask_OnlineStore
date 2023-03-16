@@ -49,6 +49,10 @@ Instead, app can immediately render some new UI and make data requests with fetc
 ## Project setup
 
 ```
+Install <a href="https://github.com/vladyslav-panchenko280/majento-store-server">This</a> and follow instructions
+
+After that, start project:
+
 npm install
 npm run start
 ```

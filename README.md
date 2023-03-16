@@ -8,7 +8,7 @@
 </div>
 
 
-<p align="center">This is store client application, developed on react.</p>
+<p align="center">Minimalistic online store, built on React. The shop for various products with dinamically changed attributes</p>
 
 ## Pages
 
